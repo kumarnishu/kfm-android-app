@@ -1,21 +1,24 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/types';
+import { Button, Surface, Text } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
 
 type Props = StackScreenProps<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   return (
-    <View style={styles.container}>
+    <Surface elevation={2} style={styles.container}>
       <Text style={styles.title}>Home Screen</Text>
       <Button
-        title="Go to Details"
+        mode='contained'
         onPress={() =>
           navigation.navigate('Details', { itemId: 42, message: 'Hello from Home!' })
         }
-      />
-    </View>
+      >
+        Go to Details
+      </Button>
+    </Surface>
   );
 };
 
