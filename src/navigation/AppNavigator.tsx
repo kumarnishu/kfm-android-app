@@ -58,18 +58,13 @@ const AppNavigator = () => {
     setupInterceptors(navigate);
   }, []);
 
-  return (
-    <NavigationContainer ref={navigationRef}>
-      {isLoading ? <VideoLoader videoUrl='https://www.w3schools.com/html/mov_bbb.mp4' />
-        :
-        <>
-          {
-            user ? <AuthenticatedNavigator /> : <PublicNavigator />
-          }
-        </>
-      }
-    </NavigationContainer>
-  );
+  if (user)
+    return (
+      <NavigationContainer ref={navigationRef}>
+        {user ? <AuthenticatedNavigator /> : <PublicNavigator />}
+      </NavigationContainer>
+    );
+  return <VideoLoader videoUrl='https://www.w3schools.com/html/mov_bbb.mp4' />
 };
 
 export default AppNavigator;

@@ -28,11 +28,11 @@ export function UserProvider(props: { children: JSX.Element }) {
     useEffect(() => {
         if (isSuccess && data) {
             setTimeout(() => {
-                setIsLoading(false)
                 setUser(data.data.user)
+                setIsLoading(false)
             }, 2000);
         }
-    }, [isSuccess, data])
+    }, [isSuccess])
 
     useEffect(() => {
         setIsLoading(false)
