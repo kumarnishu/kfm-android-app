@@ -23,20 +23,16 @@ export const UserContext = createContext<Context>({
 export function UserProvider(props: { children: JSX.Element }) {
     const [user, setUser] = useState<GetUserDto>();
     const [isLoading, setIsLoading] = useState(true)
-    const { data, isSuccess, error } = useQuery<AxiosResponse<{ user: GetUserDto }>, BackendError>("profile", GetProfile)
+    const { data, isSuccess } = useQuery<AxiosResponse<{ user: GetUserDto }>, BackendError>("profile", GetProfile)
 
     useEffect(() => {
         if (isSuccess && data) {
+            setUser(data.data.user)
             setTimeout(() => {
-                setUser(data.data.user)
                 setIsLoading(false)
-            }, 2000);
+            }, 5000);
         }
     }, [isSuccess])
-
-    useEffect(() => {
-        setIsLoading(false)
-    }, [error])
 
     return (
         <UserContext.Provider value={{ user, setUser, isLoading }
