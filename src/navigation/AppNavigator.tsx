@@ -57,14 +57,21 @@ const AppNavigator = () => {
   useEffect(() => {
     setupInterceptors(navigate);
   }, []);
+  if (isLoading)
+    return <VideoLoader videoUrl='https://www.w3schools.com/html/mov_bbb.mp4' />
 
-  if (user)
+  if (!isLoading && user)
     return (
       <NavigationContainer ref={navigationRef}>
-        {user ? <AuthenticatedNavigator /> : <PublicNavigator />}
+        <AuthenticatedNavigator /> 
       </NavigationContainer>
     );
-  return <VideoLoader videoUrl='https://www.w3schools.com/html/mov_bbb.mp4' />
+  if (!isLoading && !user)
+    return (
+      <NavigationContainer ref={navigationRef}>
+       <PublicNavigator />
+      </NavigationContainer>
+    );
 };
 
 export default AppNavigator;
