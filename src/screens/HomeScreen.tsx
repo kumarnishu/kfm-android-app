@@ -1,10 +1,10 @@
 import React from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/types';
 import { Button, Surface, Text } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
+import { AuthenticatedStackParamList } from '../navigation/AppNavigator';
 
-type Props = StackScreenProps<RootStackParamList, 'Home'>;
+type Props = StackScreenProps<AuthenticatedStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   return (
@@ -13,7 +13,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       <Button
         mode='contained'
         onPress={() =>
-          navigation.navigate('Details', { itemId: 42, message: 'Hello from Home!' })
+          navigation.navigate('Details', { itemId: 42 })
         }
       >
         Go to Details
