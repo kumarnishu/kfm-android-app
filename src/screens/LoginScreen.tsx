@@ -54,7 +54,7 @@ const LoginScreen = ({ navigation }: Props) => {
 
   useEffect(() => {
     if (isSuccess) {
-      navigation.navigate("OtpVerify", { mobile: formik.values.mobile })
+      navigation.replace("OtpVerify", { mobile: formik.values.mobile })
       AsyncStorage.setItem('uname', formik.values.mobile);
       setMessage(undefined)
     }
