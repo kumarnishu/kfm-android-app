@@ -44,7 +44,10 @@ const Navbar = () => {
                         name="notifications"
                         size={40}
                         color="white"
-                        onPress={() => console.log("Notification pressed")}
+                        onPress={() => {
+                            navigate("NotificationScreen")
+                            closeMenu()
+                        }}
                     />
                     <View style={styles.badge}>
                         <Text style={styles.badgeText}>
@@ -56,7 +59,7 @@ const Navbar = () => {
                 {/* Menu Icon with Dropdown */}
                 <Menu
                     visible={menuVisible}
-                    style={{ width: 150}}
+                    style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', width: 150}}
                     anchorPosition='bottom'
                     onDismiss={closeMenu}
                     anchor={
@@ -68,14 +71,14 @@ const Navbar = () => {
                         />
                     }
                 >
-                    <Button  mode="contained" >
-                        <Text style={{ color: 'white' }} onPress={() => {
+                    <Button mode="contained" buttonColor='whitesmoke' >
+                        <Text style={{ color: 'grey' }} onPress={() => {
                             navigate("HomeScreen")
                             closeMenu()
                         }}>Home</Text>
                     </Button>
                     <Divider style={{ marginVertical: 5 }} />
-                    <Button  mode="outlined" >
+                    <Button mode="text" >
                         <Text style={{ color: 'red' }} onPress={handleLogout}>Exit</Text>
                     </Button>
                 </Menu>

@@ -23,16 +23,6 @@ export const Register = async (body: RegisterAsCustomerDto) => {
 };
 
 
-
-
-
-
-
-
-
-
-
-
 export const GetAllEngineers = async () => {
   return await apiClient.get(`engineers`)
 }

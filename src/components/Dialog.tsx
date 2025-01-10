@@ -1,0 +1,51 @@
+import React, { useEffect, useState } from 'react';
+import { Modal, ScrollView, StyleSheet, Text } from 'react-native';
+import { useTheme } from 'react-native-paper';
+
+type Props = {
+  visible: boolean,
+  handleClose: () => void,
+  fullScreen?: boolean,
+  children?: React.ReactNode;
+}
+const Dialog = ({ visible, handleClose, fullScreen, children }: Props) => {
+  const [isFullScreen, setIsFullScreen] = useState(fullScreen)
+  const theme = useTheme()
+  useEffect(() => {
+    setIsFullScreen(fullScreen)
+  }, [fullScreen])
+  return (
+    <Modal
+     
+      animationType="fade"
+      transparent={isFullScreen ? false : true}
+      visible={visible}
+      onRequestClose={handleClose}>
+      <ScrollView  contentContainerStyle={[isFullScreen ? styles.fullScreen : styles.default, { backgroundColor: theme.dark ? '#1A1A1A' : 'white' }]}>
+        {children}
+      </ScrollView>
+    </Modal >
+  );
+};
+
+const styles = StyleSheet.create({
+  fullScreen: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  default: {
+    marginHorizontal: 15,
+    marginVertical: 100,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    borderRadius: 5,
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  }
+});
+
+export default Dialog;

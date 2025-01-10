@@ -29,17 +29,17 @@ import ServiceRequestsScreen from '../screens/main/ServiceRequestsScreen';
 export type AuthenticatedStackParamList = {
   HomeScreen: undefined;
   NotificationScreen: undefined;
-  CustomerDetailsScreen: { id: number }; // Example parameter
+  CustomerDetailsScreen: { id: string }; // Example parameter
   CustomersScreen: undefined
-  MachineDetailsScreen: { id: number }; // Example parameter
+  MachineDetailsScreen: { id: string }; // Example parameter
   MachinesScreen: undefined
-  SpareDetailsScreen: { id: number }; // Example parameter
+  SpareDetailsScreen: { id: string }; // Example parameter
   SparesScreen: undefined
-  EngineerDetailsScreen: { id: number }; // Example parameter
+  EngineerDetailsScreen: { id: string }; // Example parameter
   EngineersScreen: undefined
-  ProductDetailsScreen: { id: number }; // Example parameter
+  ProductDetailsScreen: { id: string }; // Example parameter
   ProductsScreen: undefined
-  ServiceRequestDetailsScreen: { id: number }; // Example parameter
+  ServiceRequestDetailsScreen: { id: string }; // Example parameter
   ServiceRequestsScreen: undefined
 };
 

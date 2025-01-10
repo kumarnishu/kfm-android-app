@@ -11,7 +11,7 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
   const { setUser } = useContext(UserContext)
   return (
     <Surface elevation={2} style={styles.container}>
-      <Text style={styles.title}>Home Screen</Text>
+      <Text style={styles.title}>Notifications</Text>
 
 
     </Surface >
