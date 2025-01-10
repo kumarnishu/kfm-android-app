@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
-import { AuthenticatedStackParamList } from '../navigation/AppNavigator';
+import { AuthenticatedStackParamList } from '../../navigation/AppNavigator';
 
-type Props = StackScreenProps<AuthenticatedStackParamList, 'CustomerDetailsScreen'>;
+type Props = StackScreenProps<AuthenticatedStackParamList, 'ServiceRequestDetailsScreen'>;
 
-const CustomerDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
+const ServiceRequestDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const { id } = route.params;
 
   return (
@@ -29,4 +29,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomerDetailsScreen;
+export default ServiceRequestDetailsScreen;

@@ -16,35 +16,35 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       title: 'Customers',
       description: 'Registered customers',
       image: require('../assets/img/customers.jpg'),
-      link: '/(app)/customers',
+      link: 'CustomersScreen',
     },
     {
       id: 5,
       title: 'Engineers',
       description: 'Our Hard working engineers',
       image: require('../assets/img/engineer.jpg'),
-      link: '/(app)/engineer',
+      link: 'EngineersScreen',
     },
     {
       id: 7,
       title: 'Machines',
       description: 'Machines that Made us',
       image: require('../assets/img/machines.jpg'),
-      link: '/(app)/machines',
+      link: 'MachinesScreen',
     },
     {
       id: 3,
       title: 'Spares',
       description: 'Available spare parts',
       image: require('../assets/img/parts.jpeg'),
-      link: '/(app)/spares',
+      link: 'SparesScreen',
     },
     {
       id: 2,
       title: 'Products',
       description: 'Registered products',
       image: require('../assets/img/products.jpeg'),
-      link: '/(app)/products',
+      link: 'ProductsScreen',
     },
 
     {
@@ -52,7 +52,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       title: 'Service Requests',
       description: 'Requests sent to us',
       image: require('../assets/img/requests.jpeg'),
-      link: '/(app)/requests',
+      link: 'ServiceRequestsScreen',
     },
 
     {
@@ -60,16 +60,17 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       title: 'Notifications',
       description: 'Nofications that matter to you',
       image: require('../assets/img/notifications.png'),
-      link: '/(app)/notifications',
+      link: 'NotificationScreen',
     },
 
   ];
 
   return (
-    <Surface elevation={2} style={styles.container}>
-      <ScrollView style={styles.container}>
+    <Surface elevation={2} >
+      <ScrollView >
         {cardData.map((card) => (
-          <TouchableOpacity key={card.id}>
+          //@ts-ignore
+          <TouchableOpacity key={card.id} onPress={() => navigation.navigate(card.link)}>
             <Card style={styles.card}>
               <Card.Content style={styles.cardContent}>
                 <Image style={styles.image} source={card.image} />
@@ -87,9 +88,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-  },
+
   card: {
     marginBottom: 10,
     borderRadius: 8,

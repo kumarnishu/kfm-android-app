@@ -6,10 +6,10 @@ import { useMutation } from 'react-query';
 import { AxiosResponse } from 'axios';
 import { ScrollView, View } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
-import { PublicStackParamList } from '../navigation/AppNavigator';
-import { Register } from '../services/UserService';
 import { BackendError } from '../..';
 import { RegisterAsCustomerDto } from '../dto/user.dto';
+import { PublicStackParamList } from '../navigation/AppNavigator';
+import { Register } from '../services/UserService';
 
 type Props = StackScreenProps<PublicStackParamList, 'RegisterScreen'>;
 
@@ -122,7 +122,6 @@ function RegisterScreen({navigation}:Props) {
           <TextInput
             label="Enter your gst number"
             mode="outlined"
-            keyboardType="number-pad"
             value={formik.values.gst}
             onChangeText={formik.handleChange('gst')}
             onBlur={formik.handleBlur('gst')}

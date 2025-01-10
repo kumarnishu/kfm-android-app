@@ -34,7 +34,7 @@ export function UserProvider(props: { children: JSX.Element }) {
     useEffect(() => {
         setTimeout(() => {
             setIsLoading(false)
-        }, 5000);
+        }, 2000);
     }, [])
     return (
         <UserContext.Provider value={{ user, setUser, isLoading }

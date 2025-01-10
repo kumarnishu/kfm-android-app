@@ -3,13 +3,13 @@ import { View } from 'react-native';
 import { useMutation } from 'react-query';
 import { AxiosResponse } from 'axios';
 import { Button, Text, Divider, Snackbar, ActivityIndicator } from 'react-native-paper';
-import { PublicStackParamList } from '../navigation/AppNavigator';
+import { useOtpVerify } from 'react-native-otp-verify';
 import { StackScreenProps } from '@react-navigation/stack';
 import { BackendError } from '../..';
 import { UserContext } from '../contexts/UserContext';
 import { GetUserDto } from '../dto/user.dto';
+import { PublicStackParamList } from '../navigation/AppNavigator';
 import { CheckOtpAndLogin, SendOtp } from '../services/UserService';
-import { useOtpVerify } from 'react-native-otp-verify';
 
 type Props = StackScreenProps<PublicStackParamList, 'OtpVerifyScreen'>;
 
@@ -77,8 +77,6 @@ const OtpVerifyScreen = ({ route }: Props) => {
             setMessage(error?.response?.data?.message || 'Unknown error occurred');
         }
     }, [isSuccess, error]);
-    console.log(hash)
-    console.log(otp)
     return (
         <>
             {message && <Snackbar
@@ -96,8 +94,8 @@ const OtpVerifyScreen = ({ route }: Props) => {
             </Snackbar>}
             <View style={{ flex: 1, padding: 20, flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
                 {timeoutError && <Text style={{ color: 'red' }}>Otp Timedout !! Retry</Text>} <Divider />
-                {isLoading && <ActivityIndicator size={'large'} style={{ margin: 10 }} color='red' />}
-                {!isLoading && <Button
+                 <ActivityIndicator size={'large'} style={{ margin: 10 }} color='red' />
+                 <Button
                     mode="text"
                     disabled={isLoading}
                     onPress={() => mobile && resendOtp({ mobile: mobile })}
@@ -105,7 +103,7 @@ const OtpVerifyScreen = ({ route }: Props) => {
                 >
                     I didnot get an otp ? Resend
 
-                </Button>}
+                </Button>
             </View >
         </>
     );

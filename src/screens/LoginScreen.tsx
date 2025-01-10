@@ -9,12 +9,13 @@ import { TextInput, Button, Text, Divider, Snackbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { PublicStackParamList } from '../navigation/AppNavigator';
 import { StackScreenProps } from '@react-navigation/stack';
-import { Link } from '@react-navigation/native';
 import { BackendError } from '../..';
 import { GetUserDto } from '../dto/user.dto';
+import { PublicStackParamList } from '../navigation/AppNavigator';
 import { SendOtp } from '../services/UserService';
+
+
 
 type Props = StackScreenProps<PublicStackParamList, 'LoginScreen'>;
 
@@ -78,12 +79,12 @@ const LoginScreen = ({ navigation }: Props) => {
       >
         {message}
       </Snackbar>}
-      <View style={{ flex: 1, padding: 20, flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
-        <Image style={{ width: 300, height: 70, marginLeft: 30 }} source={require('../assets/img/icon.png')} />
+      <View style={{ flex: 1, padding: 20, flexDirection: 'column', gap: 15, justifyContent: 'center' }}>
+        <Image style={{ width: 300, height: 50, marginLeft: 30,marginBottom:50 }} source={require('../assets/img/icon.png')} />
+        <Divider />
         <TextInput
           label="Enter your mobile"
-          placeholder="Enter your mobile"
-          autoFocus
+          placeholder="Enter Registered Mobile"
           value={formik.values.mobile}
           onChangeText={formik.handleChange('mobile')}
           onBlur={formik.handleBlur('mobile')}
@@ -92,7 +93,6 @@ const LoginScreen = ({ navigation }: Props) => {
           style={{ backgroundColor: 'white', paddingTop: 10, borderRadius: 10 }}
           error={formik.touched.mobile && !!formik.errors.mobile}
         />
-        {formik.touched.mobile && formik.errors.mobile && <Text style={{ color: 'red' }}>{formik.errors.mobile}</Text>} <Divider />
         <Button
           mode="contained"
           onPress={() => formik.handleSubmit()}
@@ -100,17 +100,17 @@ const LoginScreen = ({ navigation }: Props) => {
           buttonColor='red'
           style={{ padding: 5, borderRadius: 10 }}
         >
-           Send OTP 
+          Submit
         </Button>
 
 
         <Button
           mode="text"
           disabled={isLoading}
-          onPress={() => navigation.navigate("Register")}
+          onPress={() => navigation.navigate("RegisterScreen")}
           labelStyle={{ textAlign: 'center', fontSize: 14, marginTop: 30 }}
         >
-            I donot have an Account ? Register
+          I donot have an Account ? Register
         </Button>
       </View >
     </>

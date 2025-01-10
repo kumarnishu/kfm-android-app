@@ -1,94 +1,90 @@
-import { View, Image, StyleSheet } from 'react-native'
-import React, { useCallback, useContext, useState } from 'react'
-import { Icon, IconButton, Menu, Text } from 'react-native-paper'
-import { UserContext } from '../contexts/UserContext'
-import { Logout } from '../services/UserService'
-import { toTitleCase } from '../utils/toTitleCase'
+import { View, Image, StyleSheet } from 'react-native';
+import React, { useCallback, useContext, useState } from 'react';
+import { Button, Divider, Menu, Text } from 'react-native-paper';
+import { UserContext } from '../contexts/UserContext';
+import { Logout } from '../services/UserService';
+import { toTitleCase } from '../utils/toTitleCase';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { navigate } from '../navigation/AppNavigator';
 
 const Navbar = () => {
-    const { user } = useContext(UserContext)
-    const [menuVisible, setMenuVisible] = useState(false)
-    const { setUser } = useContext(UserContext);
-    const openMenu = () => setMenuVisible(true)
-    const closeMenu = () => setMenuVisible(false)
+    const { user, setUser } = useContext(UserContext);
+    const [menuVisible, setMenuVisible] = useState(false);
+
+    const openMenu = () => setMenuVisible(true);
+    const closeMenu = () => setMenuVisible(false);
 
     const handleLogout = useCallback(async () => {
         try {
             await Logout();
             setUser(undefined);
-        } catch (err: any) {
-            console.log(err);
+        } catch (err) {
+            console.error("Logout failed:", err);
         }
     }, [setUser]);
 
     return (
-        <View style={style.navContainer}>
+        <View style={styles.navContainer}>
             {/* Profile Picture or Username */}
             <View>
                 {user?.dp ? (
-                    <Image source={{ uri: user?.dp }} style={style.picture} />
+                    <Image source={{ uri: user.dp }} style={styles.picture} />
                 ) : (
-                    <Text style={style.logotext}>
-                        {toTitleCase(user?.username.slice(0, 8) || "")}
+                    <Text style={styles.logoText}>
+                        {toTitleCase(user?.username?.slice(0, 8) || "")}
                     </Text>
                 )}
             </View>
 
             {/* Icons Section */}
-            <View style={style.iconView}>
+            <View style={styles.iconView}>
                 {/* Notification Icon */}
-                <MaterialIcons
-                    name="notifications"
-                    size={35}
-                    color="white"
-                    onPress={() => console.log("Notification pressed")}
-                />
-                {1 > 0 && (
-                    <View style={style.badge}>
-                        <Text style={style.badgeText}>{1}</Text>
+                <View style={styles.notificationContainer}>
+                    <MaterialIcons
+                        name="notifications"
+                        size={40}
+                        color="white"
+                        onPress={() => console.log("Notification pressed")}
+                    />
+                    <View style={styles.badge}>
+                        <Text style={styles.badgeText}>
+                            {1}
+                        </Text>
                     </View>
-                )}
+                </View>
 
                 {/* Menu Icon with Dropdown */}
                 <Menu
                     visible={menuVisible}
-                    onDismiss={closeMenu}
+                    style={{ width: 150}}
                     anchorPosition='bottom'
+                    onDismiss={closeMenu}
                     anchor={
                         <MaterialIcons
                             name="menu"
-                            size={35}
+                            size={45}
                             color="white"
                             onPress={openMenu}
                         />
-
                     }
                 >
-                    {/* <Menu.Item
-                        onPress={() => router.push("/")} title="Home"
-                    />
-                    <Menu.Item
-                        onPress={() => router.push("/explore")} title="Explore"
-                    /> */}
-
-                    <Menu.Item
-                        title={<>
-                            <MaterialIcons
-                                name="logout"
-                                size={35}
-                                color="white"
-                                onPress={handleLogout}
-                            />
-                        </>}
-                    />
+                    <Button  mode="contained" >
+                        <Text style={{ color: 'white' }} onPress={() => {
+                            navigate("HomeScreen")
+                            closeMenu()
+                        }}>Home</Text>
+                    </Button>
+                    <Divider style={{ marginVertical: 5 }} />
+                    <Button  mode="outlined" >
+                        <Text style={{ color: 'red' }} onPress={handleLogout}>Exit</Text>
+                    </Button>
                 </Menu>
             </View>
         </View>
-    )
-}
+    );
+};
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
     navContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -96,33 +92,36 @@ const style = StyleSheet.create({
         height: 65,
         borderBottomWidth: 1,
         backgroundColor: 'red',
+        paddingHorizontal: 10,
     },
     iconView: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     picture: {
-        marginLeft: 10,
         width: 40,
         height: 40,
-        borderRadius: 50,
+        borderRadius: 20,
         borderColor: 'white',
         borderWidth: 2,
     },
-    logotext: {
+    logoText: {
         color: 'white',
         fontSize: 20,
-        paddingLeft: 10,
         fontWeight: 'bold',
+    },
+    notificationContainer: {
+        position: 'relative',
+        marginRight: 15,
     },
     badge: {
         position: 'absolute',
-        top: 10,
-        right: 13,
+        top: -5,
+        right: -5,
         backgroundColor: 'yellow',
         borderRadius: 10,
         minWidth: 15,
-        minHeight: 10,
+        minHeight: 15,
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 1,
@@ -132,6 +131,6 @@ const style = StyleSheet.create({
         fontSize: 10,
         fontWeight: 'bold',
     },
-})
+});
 
-export default Navbar
+export default Navbar;
