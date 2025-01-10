@@ -4,6 +4,7 @@ import { Icon, IconButton, Menu, Text } from 'react-native-paper'
 import { UserContext } from '../contexts/UserContext'
 import { Logout } from '../services/UserService'
 import { toTitleCase } from '../utils/toTitleCase'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Navbar = () => {
     const { user } = useContext(UserContext)
@@ -37,19 +38,17 @@ const Navbar = () => {
             {/* Icons Section */}
             <View style={style.iconView}>
                 {/* Notification Icon */}
-                <View>
-                    <IconButton
-                        icon="bell"
-                        size={35}
-                        iconColor="white"
-                        // onPress={() => router.push("/notifications")}
-                    />
-                    {1 > 0 && (
-                        <View style={style.badge}>
-                            <Text style={style.badgeText}>{1}</Text>
-                        </View>
-                    )}
-                </View>
+                <MaterialIcons
+                    name="notifications"
+                    size={35}
+                    color="white"
+                    onPress={() => console.log("Notification pressed")}
+                />
+                {1 > 0 && (
+                    <View style={style.badge}>
+                        <Text style={style.badgeText}>{1}</Text>
+                    </View>
+                )}
 
                 {/* Menu Icon with Dropdown */}
                 <Menu
@@ -57,11 +56,10 @@ const Navbar = () => {
                     onDismiss={closeMenu}
                     anchorPosition='bottom'
                     anchor={
-                        <IconButton
-                            icon="menu"
+                        <MaterialIcons
+                            name="menu"
                             size={35}
-
-                            iconColor="white"
+                            color="white"
                             onPress={openMenu}
                         />
 
@@ -76,9 +74,13 @@ const Navbar = () => {
 
                     <Menu.Item
                         title={<>
-                            <Icon source="logout" size={25} /><Text>Logout</Text>
+                            <MaterialIcons
+                                name="logout"
+                                size={35}
+                                color="white"
+                                onPress={handleLogout}
+                            />
                         </>}
-                        onPress={handleLogout}
                     />
                 </Menu>
             </View>

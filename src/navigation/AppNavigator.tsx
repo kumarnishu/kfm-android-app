@@ -41,7 +41,6 @@ const PublicStack = createStackNavigator<PublicStackParamList>();
 
 const AuthenticatedNavigator = () => (
   <AuthenticatedStack.Navigator initialRouteName="HomeScreen" screenOptions={{ animation: 'fade', headerShown: false }}>
-    <Navbar />
     <AuthenticatedStack.Screen name="HomeScreen" component={HomeScreen} />
     <AuthenticatedStack.Screen name="CustomersScreen" component={CustomersScreen} />
     <AuthenticatedStack.Screen name="CustomerDetailsScreen" component={CustomerDetailsScreen} />
@@ -72,7 +71,11 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      {user ? <AuthenticatedNavigator /> : <PublicNavigator />}
+
+      {user ? <>
+        <Navbar />
+        <AuthenticatedNavigator />
+      </> : <PublicNavigator />}
     </NavigationContainer>
   );
 
