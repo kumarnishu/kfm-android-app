@@ -17,8 +17,9 @@ const OtpVerifyScreen = ({ route }: Props) => {
     const { hash, otp, timeoutError, stopListener, startListener } = useOtpVerify({ numberOfDigits: 6 });
     const { mobile } = route.params;
     const { setUser } = useContext(UserContext)
+    const [isLoading, setIsLoading] = useState(true)
     const [message, setMessage] = useState<string | undefined>()
-    const { mutate, data, isSuccess, isLoading, error } = useMutation<
+    const { mutate, data, isSuccess, error } = useMutation<
         AxiosResponse<{ user: GetUserDto; token: string }>,
         BackendError,
         { mobile: string, otp: number }
@@ -44,7 +45,10 @@ const OtpVerifyScreen = ({ route }: Props) => {
     }, [])
     useEffect(() => {
         if (otp && mobile) {
-            mutate({ mobile: mobile, otp: Number(otp) })
+
+            setTimeout(() => {
+                mutate({ mobile: mobile, otp: Number(otp) })
+            }, 2000);
         }
     }, [otp])
 
@@ -59,6 +63,7 @@ const OtpVerifyScreen = ({ route }: Props) => {
 
     useEffect(() => {
         if (isSuccess && data) {
+            setIsLoading(false)
             setUser(data.data.user)
             setMessage(undefined)
             stopListener()
