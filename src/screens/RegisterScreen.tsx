@@ -11,7 +11,7 @@ import { Register } from '../services/UserService';
 import { BackendError } from '../..';
 import { RegisterAsCustomerDto } from '../dto/user.dto';
 
-type Props = StackScreenProps<PublicStackParamList, 'Register'>;
+type Props = StackScreenProps<PublicStackParamList, 'RegisterScreen'>;
 
 
 function RegisterScreen({navigation}:Props) {
@@ -56,7 +56,7 @@ function RegisterScreen({navigation}:Props) {
       setTimeout(() => {
         {
           formik.resetForm()
-          navigation.navigate("Login")
+          navigation.navigate("LoginScreen")
         }
       }, 3000);
     }

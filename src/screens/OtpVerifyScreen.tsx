@@ -11,7 +11,7 @@ import { GetUserDto } from '../dto/user.dto';
 import { CheckOtpAndLogin, SendOtp } from '../services/UserService';
 import { useOtpVerify } from 'react-native-otp-verify';
 
-type Props = StackScreenProps<PublicStackParamList, 'OtpVerify'>;
+type Props = StackScreenProps<PublicStackParamList, 'OtpVerifyScreen'>;
 
 const OtpVerifyScreen = ({ route }: Props) => {
     const { hash, otp, timeoutError, stopListener, startListener } = useOtpVerify({ numberOfDigits: 6 });
@@ -62,6 +62,10 @@ const OtpVerifyScreen = ({ route }: Props) => {
     }, [isSuccess, error]);
 
     useEffect(() => {
+        setIsLoading(false)
+    }, [timeoutError])
+    
+    useEffect(() => {
         if (isSuccess && data) {
             setIsLoading(false)
             setUser(data.data.user)
@@ -69,6 +73,7 @@ const OtpVerifyScreen = ({ route }: Props) => {
             stopListener()
         }
         if (error) {
+            setIsLoading(false)
             setMessage(error?.response?.data?.message || 'Unknown error occurred');
         }
     }, [isSuccess, error]);

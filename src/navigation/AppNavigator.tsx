@@ -7,21 +7,24 @@ import {
 import { UserContext } from '../contexts/UserContext';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
-import DetailsScreen from '../screens/DetailScreen';
 import { setupInterceptors } from '../services/utils/axiosIterceptor';
 import RegisterScreen from '../screens/RegisterScreen';
 import OtpVerifyScreen from '../screens/OtpVerifyScreen';
 import VideoLoader from '../components/VideoLoader';
+import CustomerDetailsScreen from '../screens/CustomerDetailsScreen';
+import CustomersScreen from '../screens/CustomersScreen';
+import Navbar from '../components/NavBar';
 
 export type AuthenticatedStackParamList = {
-  Home: undefined;
-  Details: { itemId: number }; // Example parameter
+  HomeScreen: undefined;
+  CustomerDetailsScreen: { id: number }; // Example parameter
+  CustomersScreen: undefined
 };
 
 export type PublicStackParamList = {
-  Login: undefined,
-  OtpVerify: { mobile: string },
-  Register: undefined
+  LoginScreen: undefined,
+  OtpVerifyScreen: { mobile: string },
+  RegisterScreen: undefined
 };
 
 export const navigationRef = createNavigationContainerRef();
@@ -37,17 +40,19 @@ const AuthenticatedStack = createStackNavigator<AuthenticatedStackParamList>();
 const PublicStack = createStackNavigator<PublicStackParamList>();
 
 const AuthenticatedNavigator = () => (
-  <AuthenticatedStack.Navigator initialRouteName="Home" screenOptions={{ animation: 'fade', headerShown: false }}>
-    <AuthenticatedStack.Screen name="Home" component={HomeScreen} />
-    <AuthenticatedStack.Screen name="Details" component={DetailsScreen} />
+  <AuthenticatedStack.Navigator initialRouteName="HomeScreen" screenOptions={{ animation: 'fade', headerShown: false }}>
+    <Navbar />
+    <AuthenticatedStack.Screen name="HomeScreen" component={HomeScreen} />
+    <AuthenticatedStack.Screen name="CustomersScreen" component={CustomersScreen} />
+    <AuthenticatedStack.Screen name="CustomerDetailsScreen" component={CustomerDetailsScreen} />
   </AuthenticatedStack.Navigator>
 );
 
 const PublicNavigator = () => (
-  <PublicStack.Navigator initialRouteName="Login" screenOptions={{ animation: 'fade', headerShown: false }}>
-    <PublicStack.Screen name="Login" component={LoginScreen} />
-    <PublicStack.Screen name="OtpVerify" component={OtpVerifyScreen} />
-    <PublicStack.Screen name="Register" component={RegisterScreen} />
+  <PublicStack.Navigator initialRouteName="LoginScreen" screenOptions={{ animation: 'fade', headerShown: false }}>
+    <PublicStack.Screen name="LoginScreen" component={LoginScreen} />
+    <PublicStack.Screen name="OtpVerifyScreen" component={OtpVerifyScreen} />
+    <PublicStack.Screen name="RegisterScreen" component={RegisterScreen} />
   </PublicStack.Navigator>
 );
 

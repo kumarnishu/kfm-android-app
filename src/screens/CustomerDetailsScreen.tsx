@@ -3,15 +3,15 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { AuthenticatedStackParamList } from '../navigation/AppNavigator';
 
-type Props = StackScreenProps<AuthenticatedStackParamList, 'Details'>;
+type Props = StackScreenProps<AuthenticatedStackParamList, 'CustomerDetailsScreen'>;
 
-const DetailsScreen: React.FC<Props> = ({ route, navigation }) => {
-  const { itemId } = route.params;
+const CustomerDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
+  const { id } = route.params;
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Details Screen</Text>
-      <Text>Item ID: {itemId}</Text>
+      <Text>Item ID: {id}</Text>
       <Button title="Go Back" onPress={() => navigation.goBack()} />
     </View>
   );
@@ -29,4 +29,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DetailsScreen;
+export default CustomerDetailsScreen;

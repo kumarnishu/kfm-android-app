@@ -16,7 +16,7 @@ import { BackendError } from '../..';
 import { GetUserDto } from '../dto/user.dto';
 import { SendOtp } from '../services/UserService';
 
-type Props = StackScreenProps<PublicStackParamList, 'Login'>;
+type Props = StackScreenProps<PublicStackParamList, 'LoginScreen'>;
 
 const LoginScreen = ({ navigation }: Props) => {
   const [message, setMessage] = useState<string | undefined>()
@@ -54,7 +54,7 @@ const LoginScreen = ({ navigation }: Props) => {
 
   useEffect(() => {
     if (isSuccess) {
-      navigation.replace("OtpVerify", { mobile: formik.values.mobile })
+      navigation.replace("OtpVerifyScreen", { mobile: formik.values.mobile })
       AsyncStorage.setItem('uname', formik.values.mobile);
       setMessage(undefined)
     }
