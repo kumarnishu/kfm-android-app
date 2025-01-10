@@ -80,7 +80,7 @@ const LoginScreen = ({ navigation }: Props) => {
         {message}
       </Snackbar>}
       <View style={{ flex: 1, padding: 20, flexDirection: 'column', gap: 15, justifyContent: 'center' }}>
-        <Image style={{ width: 300, height: 50, marginLeft: 30,marginBottom:50 }} source={require('../assets/img/icon.png')} />
+        <Image style={{ width: 300, height: 50, marginLeft: 30,marginBottom:30 }} source={require('../assets/img/icon.png')} />
         <Divider />
         <TextInput
           label="Enter your mobile"
