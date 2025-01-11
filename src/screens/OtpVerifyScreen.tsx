@@ -93,7 +93,7 @@ const OtpVerifyScreen = ({ route }: Props) => {
                 {message}
             </Snackbar>}
             <View style={{ flex: 1, padding: 20, flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
-                {timeoutError && <Text style={{ color: 'red' }}>Otp Timedout !! Retry</Text>} <Divider />
+                {timeoutError && <Text style={{ color: 'red' }}>Otp Timedout !! Retry</Text>} 
                  <ActivityIndicator size={'large'} style={{ margin: 10 }} color='red' />
                  <Button
                     mode="text"

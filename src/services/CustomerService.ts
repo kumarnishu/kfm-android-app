@@ -7,6 +7,12 @@ export const CreateOrEditCustomer = async ({ id, body }: { id?: string, body: Ge
     return await apiClient.post("customers", body);
 };
 
+export const GetAllStaffs = async () => {
+    return await apiClient.get(`staff`)
+}
+export const GetAllStaffsForDropDown = async () => {
+    return await apiClient.get(`staff/dropdown`)
+}
 
 export const GetAllCustomers = async ({ hidden }: { hidden: boolean }) => {
     return await apiClient.get(`customers/?hidden=${hidden}`)

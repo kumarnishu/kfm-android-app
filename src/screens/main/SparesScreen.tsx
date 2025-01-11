@@ -89,7 +89,7 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
       {/* Title */}
 
       <Text style={styles.title}>Spares</Text>
-      <TextInput style={{ marginBottom: 10 }} placeholder='Spares' mode='outlined' onChangeText={(val) => setFilter(val)} />
+      <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 
 
       {/* Engineer List */}

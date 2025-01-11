@@ -88,7 +88,7 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
       {/* Title */}
 
       <Text style={styles.title}>Machines</Text>
-      <TextInput style={{ marginBottom: 10 }} placeholder='Machines' mode='outlined' onChangeText={(val) => setFilter(val)} />
+      <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 
 
       {/* Engineer List */}

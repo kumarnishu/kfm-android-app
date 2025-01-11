@@ -25,6 +25,8 @@ import EngineerDetailsScreen from '../screens/details/EngineerDetailsScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import ServiceRequestDetailsScreen from '../screens/details/ServiceRequestDetailsScreen';
 import ServiceRequestsScreen from '../screens/main/ServiceRequestsScreen';
+import StaffDetailsScreen from '../screens/details/StaffDetailsScreen';
+import StaffsScreen from '../screens/main/StaffsScreen';
 
 export type AuthenticatedStackParamList = {
   HomeScreen: undefined;
@@ -37,6 +39,8 @@ export type AuthenticatedStackParamList = {
   SparesScreen: undefined
   EngineerDetailsScreen: { id: string }; // Example parameter
   EngineersScreen: undefined
+  StaffDetailsScreen: { id: string }; // Example parameter
+  StaffsScreen: undefined
   ProductDetailsScreen: { id: string }; // Example parameter
   ProductsScreen: undefined
   ServiceRequestDetailsScreen: { id: string }; // Example parameter
@@ -75,6 +79,8 @@ const AuthenticatedNavigator = () => (
     <AuthenticatedStack.Screen name="ProductDetailsScreen" component={ProductDetailsScreen} />
     <AuthenticatedStack.Screen name="EngineersScreen" component={EngineersScreen} />
     <AuthenticatedStack.Screen name="EngineerDetailsScreen" component={EngineerDetailsScreen} />
+    <AuthenticatedStack.Screen name="StaffsScreen" component={StaffsScreen} />
+    <AuthenticatedStack.Screen name="StaffDetailsScreen" component={StaffDetailsScreen} />
     <AuthenticatedStack.Screen name="ServiceRequestsScreen" component={ServiceRequestsScreen} />
     <AuthenticatedStack.Screen name="ServiceRequestDetailsScreen" component={ServiceRequestDetailsScreen} />
   </AuthenticatedStack.Navigator>

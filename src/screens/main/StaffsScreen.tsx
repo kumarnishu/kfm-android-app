@@ -1,32 +1,26 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
-import { ActivityIndicator, Surface, Text } from 'react-native-paper';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { UserContext } from '../../contexts/UserContext';
+import { Text } from 'react-native-paper';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import { AuthenticatedStackParamList } from '../../navigation/AppNavigator';
 import { useQuery } from 'react-query';
 import { AxiosResponse } from 'axios';
 import { Avatar, Button, Card, TextInput } from 'react-native-paper';
 import FuzzySearch from 'fuzzy-search';
-import { GetCustomerDto } from '../../dto/user.dto';
-import { GetAllCustomers } from '../../services/CustomerService';
 import { BackendError } from '../../..';
+import { GetUserDto } from '../../dto/user.dto';
+import { GetAllStaffs } from '../../services/CustomerService';
 
 
-type Props = StackScreenProps<AuthenticatedStackParamList, 'CustomersScreen'>;
 
-const CustomersScreen: React.FC<Props> = ({ navigation }) => {
-  const [hidden, setHidden] = useState(false);
-  const [customers, setCustomers] = useState<GetCustomerDto[]>([])
-  const [prefilteredCustomers, setPrefilteredCustomers] = useState<GetCustomerDto[]>([])
+type Props = StackScreenProps<AuthenticatedStackParamList, 'StaffsScreen'>;
+
+const StaffsScreen: React.FC<Props> = ({ navigation }) => {
+  const [engineers, setEngineers] = useState<GetUserDto[]>([])
+  const [prefilteredEngineers, setPrefilteredEngineers] = useState<GetUserDto[]>([])
   const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
-  const { user } = useContext(UserContext);
   const [filter, setFilter] = useState<string | undefined>()
-  // Fetch customers data
-  const { data, isSuccess, isLoading, isError, refetch } = useQuery<
-    AxiosResponse<GetCustomerDto[]>,
-    BackendError
-  >(["customers", hidden], async () => GetAllCustomers({ hidden: hidden }));
+  const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetUserDto[]>, BackendError>(["staff"], async () => GetAllStaffs())
 
   // Pull-to-refresh handler
   const onRefresh = async () => {
@@ -37,40 +31,41 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
 
   useEffect(() => {
     if (filter) {
-      const searcher = new FuzzySearch(customers, ['name', 'address'], {
+      const searcher = new FuzzySearch(engineers, ['username', 'email', 'mobile'], {
         caseSensitive: false,
       });
       const result = searcher.search(filter);
-      setCustomers(result)
+      setEngineers(result)
     }
     if (!filter)
-      setCustomers(prefilteredCustomers)
+      setEngineers(prefilteredEngineers)
   }, [filter])
 
   useEffect(() => {
     if (isSuccess) {
-      setCustomers(data.data)
-      setPrefilteredCustomers(data.data)
+      setEngineers(data.data)
+      setPrefilteredEngineers(data.data)
     }
   }, [isSuccess, data])
-  // Render each customer as a card
-  const renderCustomer = ({ item }: { item: GetCustomerDto }) => (
+  // Render each engineer as a card
+  const renderEngineer = ({ item }: { item: GetUserDto }) => (
 
-    <Card style={styles.card} onPress={() => navigation.navigate('CustomerDetailsScreen', { id: item._id })}>
+    <Card style={styles.card} onPress={() => navigation.navigate('StaffDetailsScreen', { id: item._id })}>
       <Card.Title
         style={{ width: '100%' }}
-        title={item.name || "Customer"}
-        subtitle={`Members : ${item.users || "0"}`}
-        subtitleStyle={{ color: 'black' }}
+        title={item.username.toUpperCase()}
+        subtitle={`Mob : ${item.mobile || "N/A"}`}
+        subtitleStyle={{ color: 'black', flexWrap: 'wrap' }}
         left={(props) => (
           <Avatar.Text
             {...props}
-            label={item.name ? item.name.charAt(0).toUpperCase() : "C"}
+            label={item.username ? item.username.charAt(0).toUpperCase() : "C"}
           />
         )}
       />
       <Card.Content>
-        <Text style={{ marginLeft: 56 }}>Address : {item.address || "0"}</Text>
+        <Text style={{ marginLeft: 56 }}>Company : {item.customer.toUpperCase() || ''}</Text>
+        <Text style={{ marginLeft: 56 }}>Email : {item.email || ''}</Text>
       </Card.Content>
     </Card>
   );
@@ -80,7 +75,7 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
     return (
       <View style={styles.loader}>
         <ActivityIndicator size="large" color="#6200ea" />
-        <Text>Loading Customers...</Text>
+        <Text>Loading Engineers...</Text>
       </View>
     );
   }
@@ -88,7 +83,7 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
   if (isError) {
     return (
       <View style={styles.loader}>
-        <Text>Failed to load customers. Please try again later.</Text>
+        <Text>Failed to load engineers. Please try again later.</Text>
         <Button mode="contained" onPress={() => refetch()}>
           Retry
         </Button>
@@ -97,34 +92,30 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
   }
 
   return (
-    <Surface elevation={2} style={styles.container}>
-      <Text style={styles.title}>Customers</Text>
+    <View style={styles.container}>
+      {/* Title */}
+
+      <Text style={styles.title}>Staff Memebers</Text>
       <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 
 
+      {/* Engineer List */}
       <FlatList
-        data={customers}
+        data={engineers}
         keyExtractor={(item) => item._id.toString()}
-        renderItem={renderCustomer}
+        renderItem={renderEngineer}
         refreshing={refreshing} // Indicates if the list is refreshing
         onRefresh={onRefresh} // Handler for pull-to-refresh
         ListEmptyComponent={
-          <Text style={styles.emptyText}>No customers found.</Text>
+          <Text style={styles.emptyText}>No engineers found.</Text>
         }
       />
 
-      {user && user.role == "admin" && (
-        <Button
-          mode="contained"
-          onPress={() => setHidden(!hidden)}
-          style={styles.toggleButton}
-        >
-          {hidden ? "Show Active Customers" : "Show Inactive Customers"}
-        </Button>
-      )}
-    </Surface >
+
+    </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -158,5 +149,4 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
 });
-
-export default CustomersScreen;
+export default StaffsScreen;

@@ -98,7 +98,7 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
       {/* Title */}
 
       <Text style={styles.title}>Registered Products</Text>
-      <TextInput style={{ marginBottom: 10 }} placeholder='Products' mode='outlined' onChangeText={(val) => setFilter(val)} />
+      <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 
 
       {/* Engineer List */}

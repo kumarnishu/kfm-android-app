@@ -96,7 +96,7 @@ const EngineersScreen: React.FC<Props> = ({ navigation }) => {
       {/* Title */}
 
       <Text style={styles.title}>Engineers</Text>
-      <TextInput style={{ marginBottom: 10 }} placeholder='Engineers' mode='outlined' onChangeText={(val) => setFilter(val)} />
+      <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 
 
       {/* Engineer List */}

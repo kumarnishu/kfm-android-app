@@ -10,37 +10,32 @@ type Props = StackScreenProps<AuthenticatedStackParamList, 'HomeScreen'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const { setUser } = useContext(UserContext)
-  const cardData: { id: number, title: string, description: string, image: any, link: string }[] = [
+  const cardData: { title: string, description: string, image: any, link: string }[] = [
     {
-      id: 1,
       title: 'Customers',
       description: 'Registered customers',
       image: require('../assets/img/customers.jpg'),
       link: 'CustomersScreen',
     },
     {
-      id: 5,
       title: 'Engineers',
       description: 'Our Hard working engineers',
       image: require('../assets/img/engineer.jpg'),
       link: 'EngineersScreen',
     },
     {
-      id: 7,
       title: 'Machines',
       description: 'Machines that Made us',
       image: require('../assets/img/machines.jpg'),
       link: 'MachinesScreen',
     },
     {
-      id: 3,
       title: 'Spares',
       description: 'Available spare parts',
       image: require('../assets/img/parts.jpeg'),
       link: 'SparesScreen',
     },
     {
-      id: 2,
       title: 'Products',
       description: 'Registered products',
       image: require('../assets/img/products.jpeg'),
@@ -48,7 +43,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     },
 
     {
-      id: 4,
       title: 'Service Requests',
       description: 'Requests sent to us',
       image: require('../assets/img/requests.jpeg'),
@@ -56,13 +50,17 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     },
 
     {
-      id: 6,
       title: 'Notifications',
       description: 'Nofications that matter to you',
       image: require('../assets/img/notifications.png'),
       link: 'NotificationScreen',
     },
-
+    {
+      title: 'Staff',
+      description: 'Staff Of Company Responible for',
+      image: require('../assets/img/staff.jpeg'),
+      link: 'StaffsScreen',
+    },
   ];
 
   return (
@@ -70,7 +68,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       <ScrollView >
         {cardData.map((card) => (
           //@ts-ignore
-          <TouchableOpacity key={card.id} onPress={() => navigation.navigate(card.link)}>
+          <TouchableOpacity key={card.title} onPress={() => navigation.navigate(card.link)}>
             <Card style={styles.card}>
               <Card.Content style={styles.cardContent}>
                 <Image style={styles.image} source={card.image} />
