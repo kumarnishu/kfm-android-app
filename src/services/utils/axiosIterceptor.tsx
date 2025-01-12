@@ -32,6 +32,10 @@ const setupInterceptors = (navigate: (name: string, params?: object) => void): v
     },
   );
 };
+const multipartHeaders = {
+  headers: {
+    'Content-Type': 'multipart/form-data'
+  }
+}
 
-
-export { BaseURL, apiClient, setupInterceptors };
+export { BaseURL, multipartHeaders, apiClient, setupInterceptors };

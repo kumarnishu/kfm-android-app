@@ -1,26 +1,20 @@
-import { GetServiceRequestForEditDto } from "../dto/service-request.dto";
-import { apiClient } from "./utils/axiosIterceptor";
+import { CloseServiceRequestDto } from "../dto/ServiceRequestDto";
+import { apiClient, multipartHeaders } from "./utils/axiosIterceptor";
 
-
-export const CreateOrEditServiceRequest = async ({ id, body }: { id?: string, body: GetServiceRequestForEditDto }) => {
-    if (id)
-        return await apiClient.put(`requests/${id}`, body);
-    return await apiClient.post("requests", body);
+export const CreateServiceRequest = async ({ body }: { body: FormData }) => {
+    return await apiClient.post("requests", body, multipartHeaders);
+};
+export const HandleServiceRequest = async ({ id,body }: { id:string,body: FormData }) => {
+    return await apiClient.post(`requests/${id}`, body, multipartHeaders);
 };
 
 
-
-export const GetAllServiceRequests = async ({ hidden }: { hidden: boolean }) => {
-    return await apiClient.get(`requests/?hidden=${hidden}`)
-}
-
-
-export const GetServiceRequestForEdit = async (id: string) => {
-    return await apiClient.get(`requests/${id}`)
+export const GetAllServiceRequests = async () => {
+    return await apiClient.get(`requests`)
 }
 
 
 // block user
-export const DeleteServiceRequest = async (id: string) => {
-    return await apiClient.delete(`requests/${id}`)
+export const CloseServiceRequest = async ({ id,body }: { id:string,body: CloseServiceRequestDto }) => {
+    return await apiClient.post(`requests/${id}`, body);
 }

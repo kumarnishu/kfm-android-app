@@ -1,19 +1,21 @@
-import { Image } from 'react-native';
-import { GetUserDto } from '../../../dto/user.dto';
+import { GetCustomerDto } from '../../../dto/CustomerDto';
+import { GetUserDto } from '../../../dto/UserDto';
 import Dialog from '../../Dialog';
+import CreateOrEditCustomerForm from '../../forms/customers/CreateOrEditCustomerForm';
+import CreateOrEditStaffForm from '../../forms/customers/CreateOrEditStaffForm';
 
 type Props = {
     dialog: string | undefined,
     setDialog: React.Dispatch<React.SetStateAction<string | undefined>>
-    user?: GetUserDto
+    staff?: GetUserDto,
+    customer: string
 }
 
-function CreateOrEditStaffDialog({ dialog, setDialog }: Props) {
+function CreateOrEditStaffDialog({ staff, customer, dialog, setDialog }: Props) {
     return (
         <Dialog fullScreen visible={dialog === 'CreateOrEditStaffDialog'} handleClose={() => setDialog(undefined)}
         >
-            <Image style={{ flex: 1, height: '100%', width: '100%' }}
-                source={{ uri: 'https://storage.googleapis.com/agarson-app-bucket/users%2Fmedia%2F1735974438421%2Fa915778e-da5d-496a-81f8-dd135407ec06.jpeg1735974430542' }} />
+            <CreateOrEditStaffForm customer={customer} staff={staff} setDialog={setDialog} />
         </Dialog>
     )
 }

@@ -1,44 +1,33 @@
-import { GetCustomerForEditDto } from "../dto/customer.dto";
+import { CreateOrEditCustomerDto } from "../dto/CustomerDto";
+import { CreateOrEditUserDto } from "../dto/UserDto";
 import { apiClient } from "./utils/axiosIterceptor";
 
-export const CreateOrEditCustomer = async ({ id, body }: { id?: string, body: GetCustomerForEditDto }) => {
-    if (id)
-        return await apiClient.put(`customers/${id}`, body);
-    return await apiClient.post("customers", body);
+export const CreateOrEditCustomer = async ({ id, body }: { id?: string, body: CreateOrEditCustomerDto }) => {
+  if (id)
+    return await apiClient.put(`customers/${id}`, body)
+  return await apiClient.post("customers", body)
 };
+
+export const GetAllCustomersStaffForAdmin = async ({ id }: { id: string }) => {
+  return await apiClient.get(`customers/${id}`)
+}
+export const GetAllCustomers = async () => {
+  return await apiClient.get(`customers`)
+}
+
+export const GetAllCustomersForDropDown = async () => {
+  return await apiClient.get(`customers/dropdown`)
+}
 
 export const GetAllStaffs = async () => {
-    return await apiClient.get(`staff`)
+  return await apiClient.get(`staff`)
 }
+export const CreateOrEditStaff = async ({ id, body }: { id?: string, body: CreateOrEditUserDto }) => {
+  if (id)
+    return await apiClient.put(`staff/${id}`, body)
+  return await apiClient.post("staff", body)
+};
+
 export const GetAllStaffsForDropDown = async () => {
-    return await apiClient.get(`staff/dropdown`)
+  return await apiClient.get(`staff/dropdown`)
 }
-
-export const GetAllCustomers = async ({ hidden }: { hidden: boolean }) => {
-    return await apiClient.get(`customers/?hidden=${hidden}`)
-}
-
-export const GetCustomersForDropdown = async ({ hidden }: { hidden: boolean }) => {
-    return await apiClient.get(`dropdown/customers/?hidden=${hidden}`)
-}
-
-
-export const GetCustomerForEdit = async (id: string) => {
-    return await apiClient.get(`customers/${id}`)
-}
-
-
-// block user
-export const ToogleBlockCustomer = async (id: string) => {
-    return await apiClient.patch(`toogle-block-customer/${id}`)
-}
-
-
-
-export const CreateCustomerFromExcel = async (body: FormData) => {
-    return await apiClient.post("create-from-excel/customers", body);
-};
-
-export const DownloadExcelTemplateForCreateCustomers = async () => {
-    return await apiClient.get("download/template/customers");
-};

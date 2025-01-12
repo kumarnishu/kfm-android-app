@@ -8,9 +8,9 @@ import { AxiosResponse } from 'axios';
 import FuzzySearch from 'fuzzy-search';
 import { useQuery } from 'react-query';
 import { BackendError } from '../../..';
-import { GetSparePartDto } from '../../dto/spare-part.dto';
 import { GetAllSpareParts } from '../../services/SparePartService';
 import { formatter } from '../../utils/formatter';
+import { GetSparePartDto } from '../../dto/SparePartDto';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'SparesScreen'>;
 
@@ -19,9 +19,9 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
   const [prefilteredSpares, setPrefilteredSpares] = useState<GetSparePartDto[]>([])
   const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
   const { user } = useContext(UserContext);
-  const [hidden, setHidden] = useState(false);
+  
   const [filter, setFilter] = useState<string | undefined>()
-  const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetSparePartDto[]>, BackendError>(["spares", hidden], async () => GetAllSpareParts({ hidden: hidden }))
+  const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetSparePartDto[]>, BackendError>(["spares"], async () => GetAllSpareParts())
 
   console.log(spares)
   // Pull-to-refresh handler
@@ -57,7 +57,7 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
       <Card.Content style={styles.cardContent} >
         <Title style={styles.title}>{item.name}</Title>
         <Paragraph style={styles.paragraph}>Part No : {item.partno}</Paragraph>
-        {item.compatible_machines && <Text style={styles.paragraph}>Compatibility : {item.compatible_machines}</Text>}
+        {item.compatible_machines && <Text style={styles.paragraph}>Compatibility : {item.compatible_machines.length}</Text>}
         <Paragraph style={styles.rupees}>{formatter.format(item.price) + " Rs"}</Paragraph>
       </Card.Content>
     </Card>
@@ -104,16 +104,7 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
         }
       />
 
-      {/* Toggle Active/Inactive Customers */}
-      {user && user.role=="admin" && (
-        <Button
-          mode="contained"
-          onPress={() => setHidden(!hidden)}
-          style={styles.toggleButton}
-        >
-          {hidden ? "Show Active Spares" : "Show Inactive Spares"}
-        </Button>
-      )}
+
     </View>
   );
 };

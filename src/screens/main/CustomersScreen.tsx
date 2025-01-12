@@ -8,25 +8,26 @@ import { useQuery } from 'react-query';
 import { AxiosResponse } from 'axios';
 import { Avatar, Button, Card, TextInput } from 'react-native-paper';
 import FuzzySearch from 'fuzzy-search';
-import { GetCustomerDto } from '../../dto/user.dto';
 import { GetAllCustomers } from '../../services/CustomerService';
 import { BackendError } from '../../..';
+import { GetCustomerDto } from '../../dto/CustomerDto';
+import CreateOrEditCustomerDialog from '../../components/dialogs/customers/CreateOrEditCustomerDialog';
 
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'CustomersScreen'>;
 
 const CustomersScreen: React.FC<Props> = ({ navigation }) => {
-  const [hidden, setHidden] = useState(false);
+  const [dialog, setDialog] = useState<string>()
+  const { user } = useContext(UserContext);
   const [customers, setCustomers] = useState<GetCustomerDto[]>([])
   const [prefilteredCustomers, setPrefilteredCustomers] = useState<GetCustomerDto[]>([])
   const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
-  const { user } = useContext(UserContext);
   const [filter, setFilter] = useState<string | undefined>()
   // Fetch customers data
   const { data, isSuccess, isLoading, isError, refetch } = useQuery<
     AxiosResponse<GetCustomerDto[]>,
     BackendError
-  >(["customers", hidden], async () => GetAllCustomers({ hidden: hidden }));
+  >(["customers"], async () => GetAllCustomers());
 
   // Pull-to-refresh handler
   const onRefresh = async () => {
@@ -98,7 +99,10 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <Surface elevation={2} style={styles.container}>
-      <Text style={styles.title}>Customers</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
+        <Text style={styles.title}>Customers</Text>
+        {user?.role == "admin" && <Button onPress={() => setDialog('CreateOrEditCustomerDialog')}>+New</Button>}
+      </View>
       <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 
 
@@ -112,16 +116,7 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
           <Text style={styles.emptyText}>No customers found.</Text>
         }
       />
-
-      {user && user.role == "admin" && (
-        <Button
-          mode="contained"
-          onPress={() => setHidden(!hidden)}
-          style={styles.toggleButton}
-        >
-          {hidden ? "Show Active Customers" : "Show Inactive Customers"}
-        </Button>
-      )}
+      <CreateOrEditCustomerDialog dialog={dialog} setDialog={setDialog} />
     </Surface >
   );
 };

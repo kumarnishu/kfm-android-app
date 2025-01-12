@@ -8,8 +8,8 @@ import { AxiosResponse } from 'axios';
 import FuzzySearch from 'fuzzy-search';
 import { useQuery } from 'react-query';
 import { BackendError } from '../../..';
-import { GetMachineDto } from '../../dto/machine.dto';
 import { GetAllMachines } from '../../services/MachineService';
+import { GetMachineDto } from '../../dto/MachineDto';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'MachinesScreen'>;
 
@@ -18,9 +18,9 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
   const [prefilteredMachines, setPrefilteredMachines] = useState<GetMachineDto[]>([])
   const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
   const { user } = useContext(UserContext);
-  const [hidden, setHidden] = useState(false);
+  
   const [filter, setFilter] = useState<string | undefined>()
-  const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetMachineDto[]>, BackendError>(["machines", hidden], async () => GetAllMachines({ hidden: hidden }))
+  const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetMachineDto[]>, BackendError>(["machines"], async () => GetAllMachines())
 
   console.log(machines)
   // Pull-to-refresh handler
@@ -103,16 +103,7 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
         }
       />
 
-      {/* Toggle Active/Inactive Customers */}
-      {user && user.role == "admin" && (
-        <Button
-          mode="contained"
-          onPress={() => setHidden(!hidden)}
-          style={styles.toggleButton}
-        >
-          {hidden ? "Show Active Machines" : "Show Inactive Machines"}
-        </Button>
-      )}
+     
     </View>
   );
 };

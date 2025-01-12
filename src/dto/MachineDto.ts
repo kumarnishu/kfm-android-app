@@ -1,13 +1,9 @@
-export type GetMachineForEditDto = {
-    _id?: string,
-    name: string,
-    model: string,
-}
+import { DropDownDto } from "./DropDownDto"
 
-export type CreateMachineFromExcelDto = {
+export type CreateOrEditMachineDto = {
     name: string,
     model: string,
-    status?: string
+    photo:string
 }
 
 export type GetMachineDto = {
@@ -18,8 +14,8 @@ export type GetMachineDto = {
     is_active: boolean,
     created_at: string,
     updated_at: string,
-    created_by: string,
-    updated_by: string
+    created_by: DropDownDto,
+    updated_by: DropDownDto
 }
 
 

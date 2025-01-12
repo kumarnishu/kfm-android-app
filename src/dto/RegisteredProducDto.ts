@@ -1,5 +1,6 @@
-export type GetRegisteredProductForEditDto = {
-    _id?: string,
+import { DropDownDto } from "./DropDownDto"
+
+export type CreateOrEditRegisteredProductDto = {
     sl_no: string,
     machine: string,
     customer: string,
@@ -8,30 +9,21 @@ export type GetRegisteredProductForEditDto = {
     installationDate?: string,
 }
 
-export type CreateRegisteredProductFromExcelDto = {
-    sl_no: string,
-    machine: string,
-    customer: string,
-    warrantyUpto: string,
-    isInstalled: string,
-    installationDate: string,
-    status?: string
-}
 
 export type GetRegisteredProductDto = {
     _id: string,
     sl_no: string,
-    machine: string,
+    machine: DropDownDto,
     machine_photo:string,
-    customer: string,
+    customer: DropDownDto,
     is_active: boolean,
     warrantyUpto: string,
     isInstalled: boolean,
     installationDate: string,
     created_at: string,
     updated_at: string,
-    created_by: string,
-    updated_by: string,
+    created_by: DropDownDto,
+    updated_by: DropDownDto,
 }
 
 

@@ -7,9 +7,9 @@ import { useOtpVerify } from 'react-native-otp-verify';
 import { StackScreenProps } from '@react-navigation/stack';
 import { BackendError } from '../..';
 import { UserContext } from '../contexts/UserContext';
-import { GetUserDto } from '../dto/user.dto';
 import { PublicStackParamList } from '../navigation/AppNavigator';
 import { CheckOtpAndLogin, SendOtp } from '../services/UserService';
+import { GetUserDto } from '../dto/UserDto';
 
 type Props = StackScreenProps<PublicStackParamList, 'OtpVerifyScreen'>;
 

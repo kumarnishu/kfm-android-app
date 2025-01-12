@@ -1,182 +1,141 @@
-// import React, { useEffect, useContext } from 'react';
-// import { View, StyleSheet } from 'react-native';
-// import { Button, TextInput, ActivityIndicator } from 'react-native-paper';
-// import { useFormik } from 'formik';
-// import * as Yup from 'yup';
-// import { useMutation } from 'react-query';
-// import { AlertContext } from '../../../contexts/alertContext';
-// import { CreateOrEditCustomer } from '../../../services/CustomerService';
+import React, { useEffect, useState } from 'react';
+import { Button, TextInput, HelperText, Text, Snackbar, Divider } from 'react-native-paper';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useMutation } from 'react-query';
+import { AxiosResponse } from 'axios';
+import { ScrollView, View } from 'react-native';
+import { BackendError } from '../../../..';
+import { CreateOrEditUserDto, GetUserDto } from '../../../dto/UserDto';
+import { CreateOrEditStaff } from '../../../services/CustomerService';
 
-// export type GetUserDto = {
-//   _id?: string;
-//   username: string;
-//   mobile: string;
-//   email: string;
-//   dp: string;
-//   is_active: boolean;
-//   customer: string;
-//   role: string; // 'admin', 'engineer', 'owner', 'staff'
-//   mobile_verified: boolean;
-//   email_verified: boolean;
-//   created_at?: string;
-//   updated_at?: string;
-//   created_by?: string;
-//   updated_by?: string;
-// };
 
-// type Props = {
-//   user?: GetUserDto;
-//   setDialog: React.Dispatch<React.SetStateAction<string | undefined>>;
-// };
+function CreateOrEditStaffForm({ customer, staff, setDialog }: { customer: string, staff?: GetUserDto, setDialog: React.Dispatch<React.SetStateAction<string | undefined>> }) {
+    const [message, setMessage] = useState<string | undefined>()
+    const { mutate, isSuccess, isLoading } = useMutation<
+        AxiosResponse<{ message: string }>,
+        BackendError,
+        { id?: string, body: CreateOrEditUserDto }
+    >(CreateOrEditStaff, {
+        onError: ((error) => {
+            error && setMessage(error.response.data.message || "")
+        })
+    });
 
-// function CreateOrEditUserForm({ user, setDialog }: Props) {
-//   const { mutate, isLoading, isSuccess, error } = useMutation<
-//     any,
-//     any,
-//     { id?: string; body: GetUserDto }
-//   >(CreateOrEditCustomer, {
-//     onSuccess: () => {
-//       queryClient.invalidateQueries('users');
-//     },
-//   });
 
-//   const { setAlert } = useContext(AlertContext);
+    const formik = useFormik({
+        initialValues: {
+            customer: customer,
+            email: staff ? staff.email : "",
+            mobile: staff ? staff.mobile : "",
+            username: staff ? staff.username : "",
 
-//   const formik = useFormik({
-//     initialValues: {
-//       username: user?.username || '',
-//       mobile: user?.mobile || '',
-//       email: user?.email || '',
-//       dp: user?.dp || '',
-//       is_active: user?.is_active || false,
-//       customer: user?.customer || '',
-//       role: user?.role || '',
-//       mobile_verified: user?.mobile_verified || false,
-//       email_verified: user?.email_verified || false,
-//     },
-//     validationSchema: Yup.object({
-//       username: Yup.string().required('Username is required'),
-//       mobile: Yup.string().required('Mobile number is required'),
-//       email: Yup.string().email('Invalid email').required('Email is required'),
-//       role: Yup.string().required('Role is required'),
-//       customer: Yup.string().required('Customer is required'),
-//     }),
-//     onSubmit: (values) => {
-//       if (user && user._id) mutate({ id: user._id, body: values });
-//       else mutate({ body: values });
-//     },
-//   });
+        },
+        validationSchema: Yup.object({
+            username: Yup.string().required('Required').min(4).max(100),
+            customer: Yup.string().required('Required'),
+            email: Yup.string().email('Invalid email'),
+            mobile: Yup.string().required('mobile is required').min(10, 'mobile must be 10 digits').max(10, 'mobile must be 10 digits').matches(/^[0-9]+$/, 'mobile must be a number'),
+        }),
+        onSubmit: (values) => {
+            if (staff) {
+                mutate({ id: staff._id, body: values });
+            }
+            else {
+                mutate({ id: customer, body: values });
+            }
 
-//   useEffect(() => {
-//     if (user) {
-//       formik.setValues({
-//         username: user.username,
-//         mobile: user.mobile,
-//         email: user.email,
-//         dp: user.dp,
-//         is_active: user.is_active,
-//         customer: user.customer,
-//         role: user.role,
-//         mobile_verified: user.mobile_verified,
-//         email_verified: user.email_verified,
-//       });
-//     } else {
-//       formik.resetForm();
-//     }
-//   }, [user]);
+        },
+    });
 
-//   useEffect(() => {
-//     if (isSuccess) {
-//       setDialog(undefined);
-//       setAlert({
-//         message: user ? 'Updated user successfully' : 'Created new user successfully',
-//         color: 'info',
-//       });
-//     }
-//     if (error) {
-//       setAlert({
-//         message: error.response.data.message || 'An error occurred',
-//         color: 'error',
-//       });
-//     }
-//   }, [isSuccess, error]);
+    useEffect(() => {
+        if (isSuccess) {
+            setMessage(`success`)
+            setDialog(undefined)
+            setTimeout(() => {
+                {
+                    formik.resetForm()
+                }
+            }, 3000);
+        }
 
-//   return (
-//     <View style={styles.container}>
-//       <TextInput
-//         label="Username"
-//         mode="outlined"
-//         error={!!(formik.touched.username && formik.errors.username)}
-//         onChangeText={formik.handleChange('username')}
-//         onBlur={formik.handleBlur('username')}
-//         value={formik.values.username}
-//       />
-   
+    }, [isSuccess]);
 
-//       <TextInput
-//         label="Mobile"
-//         mode="outlined"
-//         error={!!(formik.touched.mobile && formik.errors.mobile)}
-//         onChangeText={formik.handleChange('mobile')}
-//         onBlur={formik.handleBlur('mobile')}
-//         value={formik.values.mobile}
-//         style={styles.spacing}
-//       />
-    
 
-//       <TextInput
-//         label="Email"
-//         mode="outlined"
-//         error={!!(formik.touched.email && formik.errors.email)}
-//         onChangeText={formik.handleChange('email')}
-//         onBlur={formik.handleBlur('email')}
-//         value={formik.values.email}
-//         style={styles.spacing}
-//       />
-      
+    return (
+        <>
+            {message && <Snackbar
+                visible={message ? true : false}
+                onDismiss={() => setMessage(undefined)}
+                action={{
+                    label: 'Close',
+                    onPress: () => {
+                        setMessage(undefined)
+                    },
+                }}
+                duration={2000} // Optional: Snackbar duration (in milliseconds)
+            >
+                {message}
+            </Snackbar>}
+            <ScrollView>
+                <View style={{ flex: 1, justifyContent: 'center', padding: 10, gap: 2 }}>
+                    <Text style={{ fontSize: 30, textAlign: 'center', padding: 20, fontWeight: 'bold' }}>Staff</Text>
+                    <TextInput
+                        label="Enter you name"
+                        mode="outlined"
+                        value={formik.values.username}
+                        onChangeText={formik.handleChange('username')}
+                        onBlur={formik.handleBlur('username')}
+                        error={formik.touched.username && Boolean(formik.errors.username)}
+                    />
+                    {formik.touched.username && Boolean(formik.errors.username) && <HelperText type="error" >
+                        {formik.errors.username}
+                    </HelperText>}
 
-//       <TextInput
-//         label="Role"
-//         mode="outlined"
-//         error={!!(formik.touched.role && formik.errors.role)}
-//         onChangeText={formik.handleChange('role')}
-//         onBlur={formik.handleBlur('role')}
-//         value={formik.values.role}
-//         style={styles.spacing}
-//       />
-     
+                    <TextInput
+                        label="Enter your email"
+                        mode="outlined"
+                        value={formik.values.email}
+                        onChangeText={formik.handleChange('email')}
+                        onBlur={formik.handleBlur('email')}
+                        error={formik.touched.email && Boolean(formik.errors.email)}
+                    />
+                    {formik.touched.email && Boolean(formik.errors.email) && <HelperText type="error" >
+                        {formik.errors.email}
+                    </HelperText>}
 
-//       <TextInput
-//         label="Customer"
-//         mode="outlined"
-//         error={!!(formik.touched.customer && formik.errors.customer)}
-//         onChangeText={formik.handleChange('customer')}
-//         onBlur={formik.handleBlur('customer')}
-//         value={formik.values.customer}
-//         style={styles.spacing}
-//       />
-     
+                    <TextInput
+                        label="Enter your mobile"
+                        mode="outlined"
+                        keyboardType="number-pad"
+                        value={formik.values.mobile}
+                        onChangeText={formik.handleChange('mobile')}
+                        onBlur={formik.handleBlur('mobile')}
+                        error={formik.touched.mobile && Boolean(formik.errors.mobile)}
+                    />
+                    {formik.touched.mobile && Boolean(formik.errors.mobile) && <HelperText type="error" >
+                        {formik.errors.mobile}
+                    </HelperText>}
 
-//       <Button
-//         mode="contained"
-//         onPress={()=>formik.handleSubmit}
-//         loading={isLoading}
-//         disabled={isLoading}
-//         style={styles.spacing}
-//       >
-//         Submit
-//       </Button>
-//     </View>
-//   );
-// }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     padding: 16,
-//   },
-//   spacing: {
-//     marginTop: 16,
-//   },
-// });
+                    <Divider style={{ marginVertical: 10 }} />
+                    <Button
+                        mode="contained"
+                        buttonColor='red'
+                        style={{ padding: 5, borderRadius: 10 }}
+                        onPress={() => formik.handleSubmit()}
+                        loading={isLoading}
+                        disabled={isLoading}
+                    >
+                        Submit
+                    </Button>
 
-// export default CreateOrEditUserForm;
+                </View>
+            </ScrollView >
+        </>
+    );
+}
+
+
+
+export default CreateOrEditStaffForm;

@@ -1,9 +1,9 @@
 import React, { createContext, useEffect, useState } from "react";
 import { useQuery } from 'react-query'
 import { AxiosResponse } from 'axios'
-import { GetUserDto } from "../dto/user.dto";
 import { GetProfile } from "../services/UserService";
 import { BackendError } from "../..";
+import { GetUserDto } from "../dto/UserDto";
 
 
 // usercontext

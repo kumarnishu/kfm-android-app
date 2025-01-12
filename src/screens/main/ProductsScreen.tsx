@@ -8,8 +8,8 @@ import { AxiosResponse } from 'axios';
 import FuzzySearch from 'fuzzy-search';
 import { useQuery } from 'react-query';
 import { BackendError } from '../../..';
-import { GetRegisteredProductDto } from '../../dto/registered.product.dto';
 import { GetAllRegisteredProducts } from '../../services/RegisteredProductService';
+import { GetRegisteredProductDto } from '../../dto/RegisteredProducDto';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'ProductsScreen'>;
 
@@ -18,9 +18,9 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
   const [prefilteredProducts, setPrefilteredProducts] = useState<GetRegisteredProductDto[]>([])
   const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
   const { user } = useContext(UserContext);
-  const [hidden, setHidden] = useState(false);
+  
   const [filter, setFilter] = useState<string | undefined>()
-  const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetRegisteredProductDto[]>, BackendError>(["products", hidden], async () => GetAllRegisteredProducts({ hidden: hidden }))
+  const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetRegisteredProductDto[]>, BackendError>(["products"], async () => GetAllRegisteredProducts())
 
   console.log(products)
   // Pull-to-refresh handler
@@ -60,11 +60,11 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
             fontWeight: 'bold',
             padding:5,
             textTransform: 'capitalize'
-          }}>{item.machine}</Paragraph>
+          }}>{item.machine.label}</Paragraph>
         </View>
         <View style={styles.textContainer}>
           <Title style={styles.title}>SerialNo : {item.sl_no}</Title>
-          <Paragraph style={styles.paragraph}>Customer : {item.customer}</Paragraph>
+          <Paragraph style={styles.paragraph}>Customer : {item.customer.label}</Paragraph>
           <Paragraph style={styles.paragraph}>{item.installationDate ? `Installation Date : ${item.installationDate}` : 'Not Installed'}</Paragraph>
           <Paragraph style={styles.paragraph}>{item.warrantyUpto ? `Warranty upto : ${item.warrantyUpto}` : 'Not Applicable'}</Paragraph>
         </View>
@@ -113,16 +113,7 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
         }
       />
 
-      {/* Toggle Active/Inactive Customers */}
-      {user && user.role=="admin" && (
-        <Button
-          mode="contained"
-          onPress={() => setHidden(!hidden)}
-          style={styles.toggleButton}
-        >
-          {hidden ? "Show Active Products" : "Show Inactive Products"}
-        </Button>
-      )}
+      
     </View>
   );
 };

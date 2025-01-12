@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Card, Paragraph, Surface, Title } from 'react-native-paper';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -9,64 +9,80 @@ type Props = StackScreenProps<AuthenticatedStackParamList, 'HomeScreen'>;
 
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
-  const { setUser } = useContext(UserContext)
-  const cardData: { title: string, description: string, image: any, link: string }[] = [
-    {
-      title: 'Customers',
-      description: 'Registered customers',
-      image: require('../assets/img/customers.jpg'),
-      link: 'CustomersScreen',
-    },
-    {
-      title: 'Engineers',
-      description: 'Our Hard working engineers',
-      image: require('../assets/img/engineer.jpg'),
-      link: 'EngineersScreen',
-    },
-    {
-      title: 'Machines',
-      description: 'Machines that Made us',
-      image: require('../assets/img/machines.jpg'),
-      link: 'MachinesScreen',
-    },
-    {
-      title: 'Spares',
-      description: 'Available spare parts',
-      image: require('../assets/img/parts.jpeg'),
-      link: 'SparesScreen',
-    },
-    {
-      title: 'Products',
-      description: 'Registered products',
-      image: require('../assets/img/products.jpeg'),
-      link: 'ProductsScreen',
-    },
+  const { user } = useContext(UserContext)
+  const [data, setData] = useState<{ title: string, description: string, image: any, link: string }[]>([])
 
-    {
+
+  useEffect(() => {
+    const cardData: { title: string, description: string, image: any, link: string }[] = []
+
+    //only admin
+    if (user?.role == "admin") {
+      cardData.push({
+        title: 'Customers',
+        description: 'Registered customers',
+        image: require('../assets/img/customers.jpg'),
+        link: 'CustomersScreen',
+      })
+      cardData.push({
+        title: 'Engineers',
+        description: 'Our Hard working engineers',
+        image: require('../assets/img/engineer.jpg'),
+        link: 'EngineersScreen',
+      })
+    }
+
+    //admin and engineer
+    if (user?.role == "admin" || user?.role == "engineer") {
+      cardData.push({
+        title: 'Machines',
+        description: 'Machines that Made us',
+        image: require('../assets/img/machines.jpg'),
+        link: 'MachinesScreen',
+      }),
+        cardData.push({
+          title: 'Spares',
+          description: 'Available spare parts',
+          image: require('../assets/img/parts.jpeg'),
+          link: 'SparesScreen',
+        })
+    }
+    if (user.role == "owner" || user.role == "admin") {
+      cardData.push({
+        title: 'Products',
+        description: 'Registered products',
+        image: require('../assets/img/products.jpeg'),
+        link: 'ProductsScreen',
+      })
+    }
+    //owner
+    if (user?.role == "owner") {
+      cardData.push({
+        title: 'Staff',
+        description: 'Staff Of Company Responible for',
+        image: require('../assets/img/staff.jpeg'),
+        link: 'StaffsScreen',
+      })
+    }
+    cardData.push({
       title: 'Service Requests',
       description: 'Requests sent to us',
       image: require('../assets/img/requests.jpeg'),
       link: 'ServiceRequestsScreen',
-    },
-
-    {
+    })
+    cardData.push({
       title: 'Notifications',
       description: 'Nofications that matter to you',
       image: require('../assets/img/notifications.png'),
       link: 'NotificationScreen',
-    },
-    {
-      title: 'Staff',
-      description: 'Staff Of Company Responible for',
-      image: require('../assets/img/staff.jpeg'),
-      link: 'StaffsScreen',
-    },
-  ];
+    })
+    setData(cardData)
+  }, [user])
 
   return (
     <Surface elevation={2} >
       <ScrollView >
-        {cardData.map((card) => (
+        {data.map((card) => (
           //@ts-ignore
           <TouchableOpacity key={card.title} onPress={() => navigation.navigate(card.link)}>
             <Card style={styles.card}>

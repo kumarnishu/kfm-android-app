@@ -1,27 +1,24 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { useQuery } from 'react-query';
 import { AxiosResponse } from 'axios';
 import { StackScreenProps } from '@react-navigation/stack';
 import { AuthenticatedStackParamList } from '../../navigation/AppNavigator';
-import { UserContext } from '../../contexts/UserContext';
 import { BackendError } from '../../..';
 import FuzzySearch from 'fuzzy-search';
 import { Card, Avatar, Button, Text, TextInput } from 'react-native-paper';
-import { GetUserDto } from '../../dto/user.dto';
-import { GetAllUsers } from '../../services/UserService';
+import { GetUserDto } from '../../dto/UserDto';
+import { GetAllCustomersStaffForAdmin } from '../../services/CustomerService';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'CustomerDetailsScreen'>;
 
 const CustomerDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const { id } = route.params;
-  const [hidden, setHidden] = useState(false);
   const [customers, setCustomers] = useState<GetUserDto[]>([])
   const [prefilteredCustomers, setPrefilteredCustomers] = useState<GetUserDto[]>([])
   const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
-  const { user } = useContext(UserContext);
   const [filter, setFilter] = useState<string | undefined>()
-  const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetUserDto[]>, BackendError>(["users", id], async () => GetAllUsers({ hidden: false, customer: String(id) }))
+  const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetUserDto[]>, BackendError>(["users", id], async () => GetAllCustomersStaffForAdmin({ id: String(id) }))
 
   // Pull-to-refresh handler
   const onRefresh = async () => {
@@ -54,7 +51,7 @@ const CustomerDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     <Card style={styles.card}>
       <Card.Title
         style={{ width: '100%' }}
-        title={item.role == "admin" ? `${item.username.toUpperCase()}-(Admin)` : item.role == "engineer" ? `${item.username.toUpperCase()}-(Engineer)` : `${item.username.toUpperCase()}-(Customer)` || "Member" + item.username.toUpperCase()}
+        title={`${item.username.toUpperCase()}-(${item.role.toUpperCase()})`}
         subtitle={`Mob : ${item.mobile || "N/A"}`}
         subtitleStyle={{ color: 'black', flexWrap: 'wrap' }}
         left={(props) => (
@@ -65,7 +62,7 @@ const CustomerDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
         )}
       />
       <Card.Content>
-        <Text style={{ marginLeft: 56 }}>Company : {item.customer.toUpperCase() || ''}</Text>
+        <Text style={{ marginLeft: 56 }}>Company : {item.customer.label.toUpperCase() || ''}</Text>
         <Text style={{ marginLeft: 56 }}>Email : {item.email || ''}</Text>
       </Card.Content>
     </Card>
@@ -112,16 +109,7 @@ const CustomerDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
         }
       />
 
-      {/* Toggle Active/Inactive Customers */}
-      {user && user.role == "admin" && (
-        <Button
-          mode="contained"
-          onPress={() => setHidden(!hidden)}
-          style={styles.toggleButton}
-        >
-          {hidden ? "Show Active Customers" : "Show Inactive Customers"}
-        </Button>
-      )}
+
     </View>
   );
 };

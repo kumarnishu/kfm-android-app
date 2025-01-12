@@ -5,16 +5,12 @@ import * as Yup from 'yup';
 import { useMutation } from 'react-query';
 import { AxiosResponse } from 'axios';
 import { ScrollView, View } from 'react-native';
-import { StackScreenProps } from '@react-navigation/stack';
-import { BackendError } from '../..';
-import { PublicStackParamList } from '../navigation/AppNavigator';
-import { CreateOrEditCustomer } from '../services/CustomerService';
-import { CreateOrEditCustomerDto } from '../dto/CustomerDto';
-
-type Props = StackScreenProps<PublicStackParamList, 'RegisterScreen'>;
+import { BackendError } from '../../../..';
+import { CreateOrEditCustomerDto, GetCustomerDto } from '../../../dto/CustomerDto';
+import { CreateOrEditCustomer } from '../../../services/CustomerService';
 
 
-function RegisterScreen({ navigation }: Props) {
+function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCustomerDto, setDialog: React.Dispatch<React.SetStateAction<string | undefined>> }) {
   const [message, setMessage] = useState<string | undefined>()
   const { mutate, isSuccess, isLoading } = useMutation<
     AxiosResponse<{ message: string }>,
@@ -29,12 +25,12 @@ function RegisterScreen({ navigation }: Props) {
 
   const formik = useFormik({
     initialValues: {
-      name: "",
-      email: "",
-      gst: "",
-      mobile: "",
-      pincode: 0,
-      address: "",
+      name: customer ? customer.name : "",
+      email: customer ? customer.email : "",
+      gst: customer ? customer.gst : "",
+      mobile: customer ? customer.mobile : "",
+      pincode: customer ? customer.pincode : 0,
+      address: customer ? customer.address : "",
 
     },
     validationSchema: Yup.object({
@@ -46,7 +42,8 @@ function RegisterScreen({ navigation }: Props) {
       mobile: Yup.string().required('mobile is required').min(10, 'mobile must be 10 digits').max(10, 'mobile must be 10 digits').matches(/^[0-9]+$/, 'mobile must be a number'),
     }),
     onSubmit: (values) => {
-      mutate({body:values});
+      if (customer?._id)
+        mutate({ id: customer?._id, body: values });
     },
   });
 
@@ -56,9 +53,9 @@ function RegisterScreen({ navigation }: Props) {
       setTimeout(() => {
         {
           formik.resetForm()
-          navigation.navigate("LoginScreen")
         }
       }, 3000);
+      setDialog(undefined)
     }
 
   }, [isSuccess]);
@@ -75,13 +72,13 @@ function RegisterScreen({ navigation }: Props) {
             setMessage(undefined)
           },
         }}
-        duration={3000} // Optional: Snackbar duration (in milliseconds)
+        duration={2000} // Optional: Snackbar duration (in milliseconds)
       >
         {message}
       </Snackbar>}
       <ScrollView>
         <View style={{ flex: 1, justifyContent: 'center', padding: 10, gap: 2 }}>
-          <Text style={{ fontSize: 30, textAlign: 'center', padding: 20, fontWeight: 'bold' }}>Create Account</Text>
+          <Text style={{ fontSize: 30, textAlign: 'center', padding: 20, fontWeight: 'bold' }}>Customer</Text>
           <TextInput
             label="Enter you name"
             mode="outlined"
@@ -165,7 +162,7 @@ function RegisterScreen({ navigation }: Props) {
             loading={isLoading}
             disabled={isLoading}
           >
-            Register
+            Submit
           </Button>
 
         </View>
@@ -176,4 +173,4 @@ function RegisterScreen({ navigation }: Props) {
 
 
 
-export default RegisterScreen;
+export default CreateOrEditCustomerForm;

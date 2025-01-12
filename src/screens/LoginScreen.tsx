@@ -11,9 +11,9 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { StackScreenProps } from '@react-navigation/stack';
 import { BackendError } from '../..';
-import { GetUserDto } from '../dto/user.dto';
 import { PublicStackParamList } from '../navigation/AppNavigator';
 import { SendOtp } from '../services/UserService';
+import { GetUserDto } from '../dto/UserDto';
 
 
 

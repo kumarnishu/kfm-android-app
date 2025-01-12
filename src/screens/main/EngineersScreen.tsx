@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Text } from 'react-native-paper';
 import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
@@ -8,15 +8,20 @@ import { AxiosResponse } from 'axios';
 import { Avatar, Button, Card, TextInput } from 'react-native-paper';
 import FuzzySearch from 'fuzzy-search';
 import { BackendError } from '../../..';
-import { GetUserDto } from '../../dto/user.dto';
-import { GetAllEngineers } from '../../services/UserService';
+import { GetUserDto } from '../../dto/UserDto';
+import { GetAllEngineers } from '../../services/EngineerServices';
+import { UserContext } from '../../contexts/UserContext';
+import CreateOrEditEngineerDialog from '../../components/dialogs/engineers/CreateOrEditEngineerDialog';
 
 
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'EngineersScreen'>;
 
 const EngineersScreen: React.FC<Props> = ({ navigation }) => {
+  const [dialog, setDialog] = useState<string>()
+  const { user } = useContext(UserContext);
   const [engineers, setEngineers] = useState<GetUserDto[]>([])
+  const [engineer, setEngineer] = useState<GetUserDto>()
   const [prefilteredEngineers, setPrefilteredEngineers] = useState<GetUserDto[]>([])
   const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
   const [filter, setFilter] = useState<string | undefined>()
@@ -64,8 +69,12 @@ const EngineersScreen: React.FC<Props> = ({ navigation }) => {
         )}
       />
       <Card.Content>
-        <Text style={{ marginLeft: 56 }}>Company : {item.customer.toUpperCase() || ''}</Text>
+        <Text style={{ marginLeft: 56 }}>Company : {item.customer.label.toUpperCase() || ''}</Text>
         <Text style={{ marginLeft: 56 }}>Email : {item.email || ''}</Text>
+        <Button onPress={() => {
+          setEngineer(item)
+          setDialog('CreateOrEditEngineerDialog')
+        }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit Engineer</Button>
       </Card.Content>
     </Card>
   );
@@ -94,8 +103,13 @@ const EngineersScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* Title */}
-
-      <Text style={styles.title}>Engineers</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
+        <Text style={styles.title}>Engineers</Text>
+        {user?.role == "admin" && <Button onPress={() => {
+          setEngineer(undefined)
+          setDialog('CreateOrEditEngineerDialog')
+        }}>+New</Button>}
+      </View>
       <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 
 
@@ -111,7 +125,7 @@ const EngineersScreen: React.FC<Props> = ({ navigation }) => {
         }
       />
 
-
+      <CreateOrEditEngineerDialog engineer={engineer} dialog={dialog} setDialog={setDialog} customer={user?.customer.id || ""} />
     </View>
   );
 };

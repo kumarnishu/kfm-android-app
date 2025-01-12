@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { AuthenticatedStackParamList } from '../../navigation/AppNavigator';
-import CreateOrEditStaffDialog from '../../components/dialogs/customers/CreateOrEditStaffDialog';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'StaffDetailsScreen'>;
 
@@ -14,7 +13,6 @@ const StaffDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       <Text style={styles.title}>Details Screen</Text>
       <Text>Item ID: {id}</Text>
       <Button title="Go Back" onPress={() => setDialog('CreateOrEditStaffDialog')} />
-      <CreateOrEditStaffDialog dialog={dialog} setDialog={setDialog} />
     </View>
   );
 };
