@@ -26,7 +26,7 @@ const setupInterceptors = (navigate: (name: string, params?: object) => void): v
         errorMessage === "login again ! session expired" ||
         errorMessage === "login again"
       ) {
-        navigate('Login');
+        navigate('LoginScreen');
       }
       return Promise.reject(error);
     },

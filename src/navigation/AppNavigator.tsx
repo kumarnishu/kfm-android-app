@@ -30,6 +30,7 @@ import StaffsScreen from '../screens/main/StaffsScreen';
 
 export type AuthenticatedStackParamList = {
   HomeScreen: undefined;
+  LoginScreen: undefined,
   NotificationScreen: undefined;
   CustomerDetailsScreen: { id: string }; // Example parameter
   CustomersScreen: undefined
@@ -67,6 +68,7 @@ const PublicStack = createStackNavigator<PublicStackParamList>();
 
 const AuthenticatedNavigator = () => (
   <AuthenticatedStack.Navigator initialRouteName="HomeScreen" screenOptions={{ animation: 'fade', headerShown: false }}>
+     <PublicStack.Screen name="LoginScreen" component={LoginScreen} />
     <AuthenticatedStack.Screen name="HomeScreen" component={HomeScreen} />
     <AuthenticatedStack.Screen name="NotificationScreen" component={NotificationScreen} />
     <AuthenticatedStack.Screen name="CustomersScreen" component={CustomersScreen} />

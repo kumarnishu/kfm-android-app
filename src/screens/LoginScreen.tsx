@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Image,
   View,
@@ -14,6 +14,7 @@ import { BackendError } from '../..';
 import { PublicStackParamList } from '../navigation/AppNavigator';
 import { SendOtp } from '../services/UserService';
 import { GetUserDto } from '../dto/UserDto';
+import { UserContext } from '../contexts/UserContext';
 
 
 
@@ -21,6 +22,7 @@ type Props = StackScreenProps<PublicStackParamList, 'LoginScreen'>;
 
 const LoginScreen = ({ navigation }: Props) => {
   const [message, setMessage] = useState<string | undefined>()
+  const { setUser } = useContext(UserContext)
   const { mutate, isSuccess, isLoading, error } = useMutation<
     AxiosResponse<{ user: GetUserDto; token: string }>,
     BackendError,
@@ -64,6 +66,9 @@ const LoginScreen = ({ navigation }: Props) => {
     }
   }, [isSuccess, error]);
 
+  useEffect(() => {
+    setUser(undefined)
+  }, [])
   return (
     <>
       {message && <Snackbar
@@ -80,7 +85,7 @@ const LoginScreen = ({ navigation }: Props) => {
         {message}
       </Snackbar>}
       <View style={{ flex: 1, padding: 20, flexDirection: 'column', gap: 15, justifyContent: 'center' }}>
-        <Image style={{ width: 300, height: 50, marginLeft: 30,marginBottom:30 }} source={require('../assets/img/icon.png')} />
+        <Image style={{ width: 300, height: 50, marginLeft: 30, marginBottom: 30 }} source={require('../assets/img/icon.png')} />
         <Divider />
         <TextInput
           label="Enter your mobile"
