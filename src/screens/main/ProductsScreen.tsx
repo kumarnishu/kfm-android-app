@@ -11,6 +11,7 @@ import { BackendError } from '../../..';
 import { GetAllRegisteredProducts } from '../../services/RegisteredProductService';
 import { GetRegisteredProductDto } from '../../dto/RegisteredProducDto';
 import CreateOrEditRegisteredProductDialog from '../../components/dialogs/products/CreateOrEditRegisteredProductDialog';
+import moment from 'moment';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'ProductsScreen'>;
 
@@ -66,10 +67,10 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
           }}>{item.machine.label}</Paragraph>
         </View>
         <View style={styles.textContainer}>
-          <Title style={styles.title}>SerialNo : {item.sl_no}</Title>
-          <Paragraph style={styles.paragraph}>Customer : {item.customer.label}</Paragraph>
-          <Paragraph style={styles.paragraph}>{item.installationDate ? `Installation Date : ${item.installationDate}` : 'Not Installed'}</Paragraph>
-          <Paragraph style={styles.paragraph}>{item.warrantyUpto ? `Warranty upto : ${item.warrantyUpto}` : 'Not Applicable'}</Paragraph>
+          <Title style={styles.title}>{item.sl_no}</Title>
+          <Paragraph style={styles.paragraph}>{item.customer.label}</Paragraph>
+          <Paragraph style={styles.paragraph}>{item.installationDate ? `Installation Date : ${moment(item.installationDate).format("DD-MM-YYYY")}` : 'Not Installed'}</Paragraph>
+          <Paragraph style={styles.paragraph}>{item.warrantyUpto ? `Warranty upto : ${moment(item.warrantyUpto).format("DD-MM-YYYY")}` : 'Not Applicable'}</Paragraph>
           <Button onPress={() => {
             setProduct(item)
             setDialog('CreateOrEditRegisteredProductDialog')
@@ -77,10 +78,12 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
         </View>
 
       </Card.Content>
-      <Button onPress={() => {
-        setProduct(item)
-        setDialog('CreateOrEditRegisteredProductDialog')
-      }} labelStyle={{ width: '100%', textAlign: 'center' }}>New Service Request</Button>
+      <Button
+        disabled={product?.warrantyUpto && new Date(product.warrantyUpto) >= new Date() ? true : false} onPress={() => {
+          console.log(product && new Date(product.warrantyUpto) >= new Date())
+          setProduct(item)
+          setDialog('CreateOrEditRegisteredProductDialog')
+        }} labelStyle={{ width: '100%', textAlign: 'center' }}>New Service Request</Button>
     </Card>
   );
 

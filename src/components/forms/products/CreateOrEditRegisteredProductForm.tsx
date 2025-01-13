@@ -1,18 +1,30 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Button, TextInput, HelperText, Text, Snackbar, Divider, Checkbox } from 'react-native-paper';
+import {
+    Button,
+    TextInput,
+    HelperText,
+    Text,
+    Divider,
+    Checkbox,
+} from 'react-native-paper';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useMutation, useQuery } from 'react-query';
 import { AxiosResponse } from 'axios';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { BackendError } from '../../../..';
-import { CreateOrEditRegisteredProductDto, GetRegisteredProductDto } from '../../../dto/RegisteredProducDto';
+import {
+    CreateOrEditRegisteredProductDto,
+    GetRegisteredProductDto,
+} from '../../../dto/RegisteredProducDto';
 import { CreateOrEditRegisteredProduct } from '../../../services/RegisteredProductService';
 import { AlertContext } from '../../../contexts/AlertContext';
 import { DropDownDto } from '../../../dto/DropDownDto';
 import { GetAllCustomersForDropDown } from '../../../services/CustomerService';
 import { GetAllMachinesDropdown } from '../../../services/MachineService';
+import moment from 'moment';
 
 function CreateOrEditRegisteredProductForm({
     setDialog,
@@ -21,24 +33,39 @@ function CreateOrEditRegisteredProductForm({
     product?: GetRegisteredProductDto;
     setDialog: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [isWarrantyPickerVisible, setWarrantyPickerVisibility] = useState(false);
     const { setAlert } = useContext(AlertContext);
-    const { mutate, isSuccess, isLoading } = useMutation<AxiosResponse<{ message: string }>, BackendError, { id?: string; body: CreateOrEditRegisteredProductDto }>(
-        CreateOrEditRegisteredProduct,
-        {
-            onError: (error) => {
-                error && setAlert({ message: error.response?.data?.message || 'An error occurred', color: 'error' });
-            },
-        }
-    );
+    const { mutate, isSuccess, isLoading } = useMutation<
+        AxiosResponse<{ message: string }>,
+        BackendError,
+        { id?: string; body: CreateOrEditRegisteredProductDto }
+    >(CreateOrEditRegisteredProduct, {
+        onError: (error) => {
+            error &&
+                setAlert({
+                    message: error.response?.data?.message || 'An error occurred',
+                    color: 'error',
+                });
+        },
+    });
 
     // Fetch dropdown data
-    const { data: customersData } = useQuery<AxiosResponse<DropDownDto[]>, BackendError>('customers', GetAllCustomersForDropDown);
-    const { data: machinesData } = useQuery<AxiosResponse<DropDownDto[]>, BackendError>('machines', GetAllMachinesDropdown);
+    const { data: customersData } = useQuery<
+        AxiosResponse<DropDownDto[]>,
+        BackendError
+    >('customers', GetAllCustomersForDropDown);
+    const { data: machinesData } = useQuery<
+        AxiosResponse<DropDownDto[]>,
+        BackendError
+    >('machines', GetAllMachinesDropdown);
 
     const formik = useFormik({
         initialValues: {
             customer: product ? product.customer.id : '',
             sl_no: product ? product.sl_no : '',
+            installationDate: product ? moment(product.installationDate).format("DD/MM/YYYY") : '',
+            warrantyUpto: product ? moment(product.warrantyUpto).format("DD/MM/YYYY") : '',
             machine: product ? product.machine.id : '',
             isInstalled: product?.isInstalled || false,
         },
@@ -63,7 +90,7 @@ function CreateOrEditRegisteredProductForm({
             setTimeout(() => formik.resetForm(), 3000);
         }
     }, [isSuccess]);
-
+    console.log(formik.values, isDatePickerVisible, isWarrantyPickerVisible)
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Registered Product</Text>
@@ -80,13 +107,11 @@ function CreateOrEditRegisteredProductForm({
             {formik.touched.sl_no && formik.errors.sl_no && (
                 <HelperText type="error">{formik.errors.sl_no}</HelperText>
             )}
-
             <Picker
                 placeholder="Select Customer"
                 onValueChange={formik.handleChange('customer')}
                 selectedValue={formik.values.customer}
                 enabled={true}
-
                 style={{
                     height: 80, // Height of the Picker
                     color: '#333', // Text color
@@ -96,7 +121,7 @@ function CreateOrEditRegisteredProductForm({
                 <Picker.Item label="Select Customer" value={undefined} />
                 {customersData && customersData.data.map((item, index) => {
                     return (
-                        <Picker.Item key={index + 1} label={String(item.label.toUpperCase())} value={item.id} />
+                        <Picker.Item key={index + 1} label={String(item.label)} value={item.id} />
                     );
                 })}
             </Picker>
@@ -122,7 +147,7 @@ function CreateOrEditRegisteredProductForm({
                 <Picker.Item label="Select Machine" value={undefined} />
                 {machinesData && machinesData.data.map((item, index) => {
                     return (
-                        <Picker.Item key={index + 1} label={String(item.label.toUpperCase())} value={item.id} />
+                        <Picker.Item key={index + 1} label={String(item.label)} value={item.id} />
                     );
                 })}
             </Picker>
@@ -133,13 +158,61 @@ function CreateOrEditRegisteredProductForm({
                 )
             }
             {/* Is Installed Checkbox */}
-            <View style={styles.checkboxContainer}>
+
+            <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center' }}>
                 <Checkbox
                     status={formik.values.isInstalled ? 'checked' : 'unchecked'}
                     onPress={() => formik.setFieldValue('isInstalled', !formik.values.isInstalled)}
                 />
                 <Text>Is Installed?</Text>
             </View>
+
+            <Divider style={styles.divider} />
+            {/* Installation Date */}
+            <Pressable onPress={() => setDatePickerVisibility(true)}><TextInput
+                label="Installation Date"
+                mode="outlined"
+                value={formik.values.installationDate}
+                onBlur={formik.handleBlur('installationDate')}
+                editable={false}
+            />
+            </Pressable>
+            {formik.touched.installationDate && formik.errors.installationDate && (
+                <HelperText type="error">{formik.errors.installationDate}</HelperText>
+            )}
+            <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={(date) => {
+                    formik.setFieldValue('installationDate', date.toISOString().split('T')[0]);
+                    setDatePickerVisibility(false);
+                }}
+                onCancel={() => setDatePickerVisibility(false)}
+            />
+
+            {/* Warranty Upto */}
+            <Pressable onPress={() => setWarrantyPickerVisibility(true)}>
+                <TextInput
+                    label="Warranty Upto"
+                    mode="outlined"
+                    value={formik.values.warrantyUpto}
+                    onBlur={formik.handleBlur('warrantyUpto')}
+                    editable={false}
+                />
+            </Pressable>
+
+            {formik.touched.warrantyUpto && formik.errors.warrantyUpto && (
+                <HelperText type="error">{formik.errors.warrantyUpto}</HelperText>
+            )}
+            <DateTimePickerModal
+                isVisible={isWarrantyPickerVisible}
+                mode="date"
+                onConfirm={(date) => {
+                    formik.setFieldValue('warrantyUpto', date.toISOString().split('T')[0]);
+                    setWarrantyPickerVisibility(false);
+                }}
+                onCancel={() => setWarrantyPickerVisibility(false)}
+            />
 
             <Divider style={styles.divider} />
 
@@ -154,7 +227,7 @@ function CreateOrEditRegisteredProductForm({
             >
                 Submit
             </Button>
-        </View >
+        </View>
     );
 }
 
@@ -163,12 +236,6 @@ export default CreateOrEditRegisteredProductForm;
 const styles = StyleSheet.create({
     container: { flex: 1, justifyContent: 'center', padding: 10, gap: 2 },
     title: { fontSize: 30, textAlign: 'center', padding: 20, fontWeight: 'bold' },
-    checkboxContainer: { flexDirection: 'row', alignItems: 'center', marginVertical: 10 },
     divider: { marginVertical: 10 },
     submitButton: { padding: 5, borderRadius: 10 },
 });
-
-const pickerSelectStyles = {
-    inputIOS: { fontSize: 16, paddingVertical: 12, paddingHorizontal: 10, borderWidth: 1, borderColor: 'gray', borderRadius: 4, color: 'black', marginVertical: 10 },
-    inputAndroid: { fontSize: 16, paddingVertical: 12, paddingHorizontal: 10, borderWidth: 1, borderColor: 'gray', borderRadius: 4, color: 'black', marginVertical: 10 },
-};
