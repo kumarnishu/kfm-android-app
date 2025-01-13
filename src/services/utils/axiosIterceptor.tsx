@@ -12,7 +12,6 @@ const apiClient = axios.create({
 });
 
 
-import { AxiosInstance } from 'axios';
 
 const setupInterceptors = (navigate: (name: string, params?: object) => void): void => {
   // Example interceptor setup
@@ -20,6 +19,7 @@ const setupInterceptors = (navigate: (name: string, params?: object) => void): v
   apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
+      console.log(error)
       const errorMessage = error.response?.data?.message
       if (
         errorMessage === "please login to access this resource" ||

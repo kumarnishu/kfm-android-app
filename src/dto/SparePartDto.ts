@@ -1,9 +1,8 @@
 import { DropDownDto } from "./DropDownDto"
 
-export type AssignOrRemoveMachineToSparePartsDto = {
+export type EditSparePartsMachinesDto = {
     machine_ids: string[],
-    part_ids: string[],
-    flag: number
+    part_id: string,
 }
 
 export type CreateOrEditSparePartDto = {

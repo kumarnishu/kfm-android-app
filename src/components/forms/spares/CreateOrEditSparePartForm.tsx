@@ -4,44 +4,23 @@ import {
   TextInput,
   HelperText,
   Text,
-  Snackbar,
   Divider,
-  IconButton,
 } from 'react-native-paper';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation } from 'react-query';
 import { AxiosResponse } from 'axios';
-import { ScrollView, View, Image, PermissionsAndroid, Platform } from 'react-native';
-import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { ScrollView, View } from 'react-native';
+import { Asset, } from 'react-native-image-picker';
 import { BackendError } from '../../../..';
 import { GetSparePartDto } from '../../../dto/SparePartDto';
 import { CreateOrEditSparePart } from '../../../services/SparePartService';
 import { AlertContext } from '../../../contexts/AlertContext';
 import { queryClient } from '../../../App';
+import SelectPhotoComponent from '../../SelectPhotoComponent';
 
 
-async function requestCameraPermission() {
-  if (Platform.OS === 'android') {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: 'Camera Permission',
-          message: 'This app requires access to your camera.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        }
-      );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    } catch (err) {
-      console.warn(err);
-      return false;
-    }
-  }
-  return true;
-}
+
 function CreateOrEditSparePartForm({
   part,
   setDialog,
@@ -49,11 +28,9 @@ function CreateOrEditSparePartForm({
   part?: GetSparePartDto;
   setDialog: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
-  const [message, setMessage] = useState<string | undefined>();
   const [validated, setValidated] = useState(true)
   const { setAlert } = useContext(AlertContext);
   const [file, setFile] = useState<Asset | null>(null);
-  const [preview, setPreview] = useState<string | undefined>();
   const { mutate, isSuccess, isLoading } = useMutation<
     AxiosResponse<{ message: string }>,
     BackendError,
@@ -63,7 +40,7 @@ function CreateOrEditSparePartForm({
       queryClient.invalidateQueries('spares')
     },
     onError: (error) => {
-      error && setMessage(error.response.data.message || '');
+      error && setAlert({ message: error.response.data.message || '', color: 'error' });
     },
   });
 
@@ -102,7 +79,7 @@ function CreateOrEditSparePartForm({
 
   useEffect(() => {
     if (isSuccess) {
-      setMessage(`success`);
+      setAlert({ message: `success`, color: 'success' });
       setTimeout(() => {
         formik.resetForm();
       }, 3000);
@@ -110,68 +87,33 @@ function CreateOrEditSparePartForm({
     }
   }, [isSuccess]);
 
-  const selectPhoto = async (source: 'camera' | 'gallery') => {
-    const options = {
-      mediaType: 'photo',
-      maxWidth: 800,
-      maxHeight: 800,
-      quality: 0.8,
-    };
-    const hasPermission = await requestCameraPermission();
-    if (!hasPermission) {
-      setAlert({ message: 'Camera permission is required', color: 'error' });
-      return;
-    }
-    try {
-      const result =
-        source === 'camera'
-          //@ts-ignore
-          ? await launchCamera(options)
-          //@ts-ignore
-          : await launchImageLibrary(options);
-
-      if (result.assets && result.assets.length > 0) {
-        const selectedFile = result.assets[0];
-        if (selectedFile.fileSize && selectedFile.fileSize > 20 * 1024 * 1024) {
-          setAlert({ message: 'Size should be less than 20 MB', color: 'info' });
-          setValidated(false)
-          return;
-        }
-        if (
-          selectedFile.type &&
-          !['image/jpeg', 'image/png', 'image/gif'].includes(selectedFile.type)
-        ) {
-          setAlert({
-            message: 'Allowed formats: .jpg, .jpeg, .png, .gif',
-            color: 'info',
-          });
-          setValidated(false)
-          return;
-        }
-        setFile(selectedFile as unknown as File);
-        setPreview(selectedFile.uri);
-        setValidated(true)
+  useEffect(() => {
+    if (file) {
+      if (file.fileSize && file.fileSize > 20 * 1024 * 1024) {
+        setAlert({ message: 'Size should be less than 20 MB', color: 'info' });
+        setValidated(false)
+        return;
       }
-    } catch (error) {
-      console.error(error);
+      if (
+        file.type &&
+        !['image/jpeg', 'image/png', 'image/gif'].includes(file.type)
+      ) {
+        setAlert({
+          message: 'Allowed formats: .jpg, .jpeg, .png, .gif',
+          color: 'info',
+        });
+        setValidated(false)
+        return;
+      }
+      setFile(file as unknown as File);
+      setValidated(true)
     }
-  };
+
+  }, [file])
 
   return (
     <>
-      {message && (
-        <Snackbar
-          visible={!!message}
-          onDismiss={() => setMessage(undefined)}
-          action={{
-            label: 'Close',
-            onPress: () => setMessage(undefined),
-          }}
-          duration={2000}
-        >
-          {message}
-        </Snackbar>
-      )}
+
       <ScrollView>
         <View style={{ flex: 1, justifyContent: 'center', padding: 10, gap: 2 }}>
           <Text
@@ -220,42 +162,8 @@ function CreateOrEditSparePartForm({
           )}
           <Divider style={{ marginVertical: 10 }} />
         </View>
-        {preview ? (
-          <Image
-            source={{ uri: preview }}
-            style={{ width: '100%', height: 300, marginBottom: 10 }}
-          />) :
-          (
 
-            part?.photo && <Image
-              source={{ uri: part.photo }}
-              style={{ width: '100%', height: 300, marginBottom: 10 }}
-            />
-          )
-        }
-
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginVertical: 10 }}>
-          <View style={{ alignItems: 'center' }}>
-            <IconButton
-              icon="camera"
-              mode="contained"
-              size={30}
-              onPress={() => selectPhoto('camera')}
-            />
-            <Text>Take Photo</Text>
-          </View>
-          <View style={{ alignItems: 'center' }}>
-            <IconButton
-              icon="image"
-              mode="contained"
-              size={30}
-              onPress={() => selectPhoto('gallery')}
-            />
-            <Text>Gallery</Text>
-          </View>
-
-
-        </View>
+        <SelectPhotoComponent photo={part?.photo} file={file} setFile={setFile} />
         <Button
           mode="contained"
           buttonColor="red"

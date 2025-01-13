@@ -10,15 +10,18 @@ import { useQuery } from 'react-query';
 import { BackendError } from '../../..';
 import { GetAllRegisteredProducts } from '../../services/RegisteredProductService';
 import { GetRegisteredProductDto } from '../../dto/RegisteredProducDto';
+import CreateOrEditRegisteredProductDialog from '../../components/dialogs/products/CreateOrEditRegisteredProductDialog';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'ProductsScreen'>;
 
 const ProductsScreen: React.FC<Props> = ({ navigation }) => {
   const [products, setProducts] = useState<GetRegisteredProductDto[]>([])
+  const [dialog, setDialog] = useState<string>()
+  const [product, setProduct] = useState<GetRegisteredProductDto>()
   const [prefilteredProducts, setPrefilteredProducts] = useState<GetRegisteredProductDto[]>([])
   const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
   const { user } = useContext(UserContext);
-  
+
   const [filter, setFilter] = useState<string | undefined>()
   const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetRegisteredProductDto[]>, BackendError>(["products"], async () => GetAllRegisteredProducts())
 
@@ -58,7 +61,7 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
           <Paragraph style={{
             fontSize: 18,
             fontWeight: 'bold',
-            padding:5,
+            padding: 5,
             textTransform: 'capitalize'
           }}>{item.machine.label}</Paragraph>
         </View>
@@ -67,8 +70,17 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
           <Paragraph style={styles.paragraph}>Customer : {item.customer.label}</Paragraph>
           <Paragraph style={styles.paragraph}>{item.installationDate ? `Installation Date : ${item.installationDate}` : 'Not Installed'}</Paragraph>
           <Paragraph style={styles.paragraph}>{item.warrantyUpto ? `Warranty upto : ${item.warrantyUpto}` : 'Not Applicable'}</Paragraph>
+          <Button onPress={() => {
+            setProduct(item)
+            setDialog('CreateOrEditRegisteredProductDialog')
+          }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
         </View>
+
       </Card.Content>
+      <Button onPress={() => {
+        setProduct(item)
+        setDialog('CreateOrEditRegisteredProductDialog')
+      }} labelStyle={{ width: '100%', textAlign: 'center' }}>New Service Request</Button>
     </Card>
   );
 
@@ -97,7 +109,13 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
     <View style={styles.container}>
       {/* Title */}
 
-      <Text style={styles.title}>Registered Products</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
+        <Text style={styles.title}>Registered Products</Text>
+        {user?.role == "admin" && <Button onPress={() => {
+          setProduct(undefined)
+          setDialog('CreateOrEditRegisteredProductDialog')
+        }}>+New</Button>}
+      </View>
       <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 
 
@@ -113,7 +131,7 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
         }
       />
 
-      
+      <CreateOrEditRegisteredProductDialog product={product} dialog={dialog} setDialog={setDialog}  />
     </View>
   );
 };
@@ -172,4 +190,4 @@ const styles = StyleSheet.create({
   toggleButton: {
     marginTop: 16,
   },
-});export default ProductsScreen;
+}); export default ProductsScreen;

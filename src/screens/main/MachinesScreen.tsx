@@ -10,15 +10,18 @@ import { useQuery } from 'react-query';
 import { BackendError } from '../../..';
 import { GetAllMachines } from '../../services/MachineService';
 import { GetMachineDto } from '../../dto/MachineDto';
+import CreateOrEditMachineDialog from '../../components/dialogs/machines/CreateOrEditMachineDialog';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'MachinesScreen'>;
 
 const MachinesScreen: React.FC<Props> = ({ navigation }) => {
   const [machines, setMachines] = useState<GetMachineDto[]>([])
+  const [machine, setMachine] = useState<GetMachineDto>()
+  const [dialog, setDialog] = useState<string>()
   const [prefilteredMachines, setPrefilteredMachines] = useState<GetMachineDto[]>([])
   const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
   const { user } = useContext(UserContext);
-  
+
   const [filter, setFilter] = useState<string | undefined>()
   const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetMachineDto[]>, BackendError>(["machines"], async () => GetAllMachines())
 
@@ -57,6 +60,10 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.textContainer}>
           <Title style={styles.title}>{item.name}</Title>
           <Paragraph style={styles.paragraph}>Model No : {item.model}</Paragraph>
+          <Button onPress={() => {
+            setMachine(item)
+            setDialog('CreateOrEditMachineDialog')
+          }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
         </View>
       </Card.Content>
     </Card>
@@ -86,8 +93,13 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* Title */}
-
-      <Text style={styles.title}>Machines</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
+        <Text style={styles.title}>Machines</Text>
+        {user?.role == "admin" && <Button onPress={() => {
+          setMachine(undefined)
+          setDialog('CreateOrEditMachineDialog')
+        }}>+New</Button>}
+      </View>
       <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 
 
@@ -103,7 +115,7 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
         }
       />
 
-     
+      <CreateOrEditMachineDialog machine={machine} dialog={dialog} setDialog={setDialog} />
     </View>
   );
 };

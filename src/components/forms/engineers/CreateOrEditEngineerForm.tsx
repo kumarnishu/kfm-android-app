@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, TextInput, HelperText, Text, Snackbar, Divider } from 'react-native-paper';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -8,17 +8,18 @@ import { ScrollView, View } from 'react-native';
 import { BackendError } from '../../../..';
 import { CreateOrEditEngineer } from '../../../services/EngineerServices';
 import { CreateOrEditUserDto, GetUserDto } from '../../../dto/UserDto';
+import { AlertContext } from '../../../contexts/AlertContext';
 
 
 function CreateOrEditEngineerForm({ customer, setDialog, staff }: { customer: string, staff?: GetUserDto, setDialog: React.Dispatch<React.SetStateAction<string | undefined>> }) {
-    const [message, setMessage] = useState<string | undefined>()
+    const { setAlert } = useContext(AlertContext);
     const { mutate, isSuccess, isLoading } = useMutation<
         AxiosResponse<{ message: string }>,
         BackendError,
         { id?: string, body: CreateOrEditUserDto }
     >(CreateOrEditEngineer, {
         onError: ((error) => {
-            error && setMessage(error.response.data.message || "")
+            error && setAlert({ message: error.response.data.message || "", color: 'error' })
         })
     });
 
@@ -50,7 +51,7 @@ function CreateOrEditEngineerForm({ customer, setDialog, staff }: { customer: st
 
     useEffect(() => {
         if (isSuccess) {
-            setMessage(`success`)
+            setAlert({ message: `success`, color: 'success' })
             setDialog(undefined)
             setTimeout(() => {
                 {
@@ -64,19 +65,7 @@ function CreateOrEditEngineerForm({ customer, setDialog, staff }: { customer: st
 
     return (
         <>
-            {message && <Snackbar
-                visible={message ? true : false}
-                onDismiss={() => setMessage(undefined)}
-                action={{
-                    label: 'Close',
-                    onPress: () => {
-                        setMessage(undefined)
-                    },
-                }}
-                duration={2000} // Optional: Snackbar duration (in milliseconds)
-            >
-                {message}
-            </Snackbar>}
+
             <ScrollView>
                 <View style={{ flex: 1, justifyContent: 'center', padding: 10, gap: 2 }}>
                     <Text style={{ fontSize: 30, textAlign: 'center', padding: 20, fontWeight: 'bold' }}>Engineer</Text>                    <TextInput

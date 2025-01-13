@@ -12,6 +12,7 @@ import { GetAllSpareParts } from '../../services/SparePartService';
 import { formatter } from '../../utils/formatter';
 import { GetSparePartDto } from '../../dto/SparePartDto';
 import CreateOrEditSpareDialog from '../../components/dialogs/spares/CreateOrEditSpareDialog';
+import EditSparePartsMachinesDialog from '../../components/dialogs/spares/EditSparePartsMachinesDialog';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'SparesScreen'>;
 
@@ -21,11 +22,11 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
   const [prefilteredSpares, setPrefilteredSpares] = useState<GetSparePartDto[]>([])
   const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
   const { user } = useContext(UserContext);
+  const [selectedMachines, setSelectedMachines] = useState<string[]>([])
   const [dialog, setDialog] = useState<string>()
   const [filter, setFilter] = useState<string | undefined>()
   const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetSparePartDto[]>, BackendError>(["spares"], async () => GetAllSpareParts())
 
-  console.log(spares)
   // Pull-to-refresh handler
   const onRefresh = async () => {
     setRefreshing(true);
@@ -65,6 +66,12 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
           setSpare(item)
           setDialog('CreateOrEditSpareDialog')
         }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
+        <Button onPress={() => {
+          setSpare(item)
+          setSelectedMachines(item.compatible_machines.map((i) => { return i.id }))
+          setDialog('EditSparePartsMachinesDialog')
+        }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit Machines</Button>
+
       </Card.Content>
     </Card>
   );
@@ -92,6 +99,7 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+
       {/* Title */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
         <Text style={styles.title}>Spares</Text>
@@ -114,6 +122,7 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
           <Text style={styles.emptyText}>No spares found.</Text>
         }
       />
+      {spare && <EditSparePartsMachinesDialog selectedMachines={selectedMachines} setSelectedMachines={setSelectedMachines} part={spare} dialog={dialog} setDialog={setDialog} />}
       <CreateOrEditSpareDialog part={spare} dialog={dialog} setDialog={setDialog} />
     </View>
   );

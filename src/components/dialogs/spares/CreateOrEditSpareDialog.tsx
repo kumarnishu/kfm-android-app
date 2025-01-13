@@ -8,7 +8,8 @@ type Props = {
     part?: GetSparePartDto,
 }
 
-function CreateOrEditSpareDialog({ part, dialog, setDialog }: Props) {
+function CreateOrEditSpareDialog({ part, dialog,setDialog }: Props) {
+    
     return (
         <Dialog fullScreen visible={dialog === 'CreateOrEditSpareDialog'} handleClose={() => setDialog(undefined)}
         >

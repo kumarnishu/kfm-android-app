@@ -47,7 +47,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           link: 'SparesScreen',
         })
     }
-    if (user.role == "owner" || user.role == "admin") {
+    if (user?.role == "owner" || user?.role == "admin") {
       cardData.push({
         title: 'Products',
         description: 'Registered products',

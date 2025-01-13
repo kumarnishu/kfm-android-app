@@ -1,4 +1,4 @@
-import { AssignOrRemoveMachineToSparePartsDto } from "../dto/SparePartDto";
+import { EditSparePartsMachinesDto } from "../dto/SparePartDto";
 import { apiClient, multipartHeaders } from "./utils/axiosIterceptor";
 
 export const GetAllSpareParts = async () => {
@@ -15,9 +15,9 @@ export const GetSparePartsForDropdown = async () => {
     return await apiClient.get(`dropdown/parts`)
 }
 
-export const AssignMachinesToSpareParts = async ({ body }: {
-    body: AssignOrRemoveMachineToSparePartsDto
+export const EditSparePartsMachines = async ({ body }: {
+    body: EditSparePartsMachinesDto
 }) => {
-    return await apiClient.patch(`parts/machines/assign`, body)
+    return await apiClient.patch(`parts/machines/edit`, body)
 }
 
