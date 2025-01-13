@@ -114,7 +114,7 @@ const StaffsScreen: React.FC<Props> = ({ navigation }) => {
 
 
       {/* Engineer List */}
-      <FlatList
+      {engineers && <FlatList
         data={engineers}
         keyExtractor={(item) => item._id.toString()}
         renderItem={renderEngineer}
@@ -123,7 +123,7 @@ const StaffsScreen: React.FC<Props> = ({ navigation }) => {
         ListEmptyComponent={
           <Text style={styles.emptyText}>No engineers found.</Text>
         }
-      />
+      />}
 
       <CreateOrEditStaffDialog dialog={dialog} setDialog={setDialog} staff={engineer} customer={user?.customer.id || ""} />
     </View>

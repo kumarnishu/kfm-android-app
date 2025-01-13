@@ -120,7 +120,7 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
 
 
       {/* Engineer List */}
-      <FlatList
+      {products && <FlatList
         data={products}
         keyExtractor={(item) => item._id.toString()}
         renderItem={renderEngineer}
@@ -129,9 +129,9 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
         ListEmptyComponent={
           <Text style={styles.emptyText}>No products found.</Text>
         }
-      />
+      />}
 
-      <CreateOrEditRegisteredProductDialog product={product} dialog={dialog} setDialog={setDialog}  />
+      <CreateOrEditRegisteredProductDialog product={product} dialog={dialog} setDialog={setDialog} />
     </View>
   );
 };

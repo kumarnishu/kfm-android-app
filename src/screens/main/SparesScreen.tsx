@@ -112,7 +112,7 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
 
 
       {/* Engineer List */}
-      <FlatList
+      {spares&&<FlatList
         data={spares}
         keyExtractor={(item) => item._id.toString()}
         renderItem={renderEngineer}
@@ -121,7 +121,7 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
         ListEmptyComponent={
           <Text style={styles.emptyText}>No spares found.</Text>
         }
-      />
+      />}
       {spare && <EditSparePartsMachinesDialog selectedMachines={selectedMachines} setSelectedMachines={setSelectedMachines} part={spare} dialog={dialog} setDialog={setDialog} />}
       <CreateOrEditSpareDialog part={spare} dialog={dialog} setDialog={setDialog} />
     </View>

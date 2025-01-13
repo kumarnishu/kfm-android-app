@@ -106,7 +106,7 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
       <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 
 
-      <FlatList
+      {customers && <FlatList
         data={customers}
         keyExtractor={(item) => item._id.toString()}
         renderItem={renderCustomer}
@@ -115,7 +115,7 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
         ListEmptyComponent={
           <Text style={styles.emptyText}>No customers found.</Text>
         }
-      />
+      />}
       <CreateOrEditCustomerDialog dialog={dialog} setDialog={setDialog} />
     </Surface >
   );

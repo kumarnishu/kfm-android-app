@@ -104,7 +104,7 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
 
 
       {/* Engineer List */}
-      <FlatList
+      {machines&&<FlatList
         data={machines}
         keyExtractor={(item) => item._id.toString()}
         renderItem={renderEngineer}
@@ -113,7 +113,7 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
         ListEmptyComponent={
           <Text style={styles.emptyText}>No machines found.</Text>
         }
-      />
+      />}
 
       <CreateOrEditMachineDialog machine={machine} dialog={dialog} setDialog={setDialog} />
     </View>
