@@ -21,6 +21,7 @@
     "react-native": "^0.76.5",
     "react-native-dotenv": "^3.4.11",
     "react-native-gesture-handler": "^2.21.2",
+    "react-native-image-picker": "^7.2.3",
     "react-native-otp-verify": "^1.1.8",
     "react-native-paper": "^5.12.5",
     "react-native-safe-area-context": "^5.0.0",

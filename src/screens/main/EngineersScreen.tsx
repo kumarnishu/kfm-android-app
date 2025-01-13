@@ -74,7 +74,7 @@ const EngineersScreen: React.FC<Props> = ({ navigation }) => {
         <Button onPress={() => {
           setEngineer(item)
           setDialog('CreateOrEditEngineerDialog')
-        }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit Engineer</Button>
+        }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
       </Card.Content>
     </Card>
   );

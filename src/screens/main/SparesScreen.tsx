@@ -11,15 +11,17 @@ import { BackendError } from '../../..';
 import { GetAllSpareParts } from '../../services/SparePartService';
 import { formatter } from '../../utils/formatter';
 import { GetSparePartDto } from '../../dto/SparePartDto';
+import CreateOrEditSpareDialog from '../../components/dialogs/spares/CreateOrEditSpareDialog';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'SparesScreen'>;
 
 const SparesScreen: React.FC<Props> = ({ navigation }) => {
   const [spares, setSpares] = useState<GetSparePartDto[]>([])
+  const [spare, setSpare] = useState<GetSparePartDto>()
   const [prefilteredSpares, setPrefilteredSpares] = useState<GetSparePartDto[]>([])
   const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
   const { user } = useContext(UserContext);
-  
+  const [dialog, setDialog] = useState<string>()
   const [filter, setFilter] = useState<string | undefined>()
   const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetSparePartDto[]>, BackendError>(["spares"], async () => GetAllSpareParts())
 
@@ -59,6 +61,10 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
         <Paragraph style={styles.paragraph}>Part No : {item.partno}</Paragraph>
         {item.compatible_machines && <Text style={styles.paragraph}>Compatibility : {item.compatible_machines.length}</Text>}
         <Paragraph style={styles.rupees}>{formatter.format(item.price) + " Rs"}</Paragraph>
+        <Button onPress={() => {
+          setSpare(item)
+          setDialog('CreateOrEditSpareDialog')
+        }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
       </Card.Content>
     </Card>
   );
@@ -87,8 +93,13 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* Title */}
-
-      <Text style={styles.title}>Spares</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
+        <Text style={styles.title}>Spares</Text>
+        {user?.role == "admin" && <Button onPress={() => {
+          setSpare(undefined)
+          setDialog('CreateOrEditSpareDialog')
+        }}>+New</Button>}
+      </View>
       <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 
 
@@ -103,8 +114,7 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
           <Text style={styles.emptyText}>No spares found.</Text>
         }
       />
-
-
+      <CreateOrEditSpareDialog part={spare} dialog={dialog} setDialog={setDialog} />
     </View>
   );
 };
@@ -168,4 +178,4 @@ const styles = StyleSheet.create({
   toggleButton: {
     marginTop: 16,
   },
-});export default SparesScreen;
+}); export default SparesScreen;
