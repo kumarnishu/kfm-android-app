@@ -79,8 +79,7 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
 
       </Card.Content>
       <Button
-        disabled={product?.warrantyUpto && new Date(product.warrantyUpto) >= new Date() ? true : false} onPress={() => {
-          console.log(product && new Date(product.warrantyUpto) >= new Date())
+        disabled={item?.warrantyUpto && new Date(item.warrantyUpto) <= new Date() ? true : false} onPress={() => {
           setProduct(item)
           setDialog('CreateOrEditRegisteredProductDialog')
         }} labelStyle={{ width: '100%', textAlign: 'center' }}>New Service Request</Button>
