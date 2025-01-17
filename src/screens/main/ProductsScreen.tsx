@@ -12,6 +12,7 @@ import { GetAllRegisteredProducts } from '../../services/RegisteredProductServic
 import { GetRegisteredProductDto } from '../../dto/RegisteredProducDto';
 import CreateOrEditRegisteredProductDialog from '../../components/dialogs/products/CreateOrEditRegisteredProductDialog';
 import moment from 'moment';
+import NewServiceRequestsDialog from '../../components/dialogs/service requests/NewServiceRequestsDialog';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'ProductsScreen'>;
 
@@ -81,7 +82,7 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
       <Button
         disabled={item?.warrantyUpto && new Date(item.warrantyUpto) <= new Date() ? true : false} onPress={() => {
           setProduct(item)
-          setDialog('CreateOrEditRegisteredProductDialog')
+          setDialog('NewServiceRequestsDialog')
         }} labelStyle={{ width: '100%', textAlign: 'center' }}>New Service Request</Button>
     </Card>
   );
@@ -134,6 +135,7 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
       />}
 
       <CreateOrEditRegisteredProductDialog product={product} dialog={dialog} setDialog={setDialog} />
+      <NewServiceRequestsDialog  product={product} dialog={dialog} setDialog={setDialog}/>
     </View>
   );
 };

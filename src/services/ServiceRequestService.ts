@@ -4,8 +4,11 @@ import { apiClient, multipartHeaders } from "./utils/axiosIterceptor";
 export const CreateServiceRequest = async ({ body }: { body: FormData }) => {
     return await apiClient.post("requests", body, multipartHeaders);
 };
+export const GetServiceRequest = async ({id }: { id:string }) => {
+    return await apiClient.get(`requests/${id}`);
+}
 export const HandleServiceRequest = async ({ id,body }: { id:string,body: FormData }) => {
-    return await apiClient.post(`requests/${id}`, body, multipartHeaders);
+    return await apiClient.put(`requests/${id}`, body, multipartHeaders);
 };
 
 

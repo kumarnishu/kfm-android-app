@@ -3,7 +3,7 @@ import {
   Text,
   IconButton,
 } from 'react-native-paper';
-import { View, PermissionsAndroid, Platform } from 'react-native';
+import { View, PermissionsAndroid, Platform, Image, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { AlertContext } from '../contexts/AlertContext';
 
@@ -62,25 +62,44 @@ function SelectMediaComponent({
           : await launchImageLibrary(options);
 
       if (result.assets && result.assets.length > 0) {
-        let tmpfiles = files
-        result.assets.map((as, i) => {
-          let id = tmpfiles.length + i + 1
-          tmpfiles.push({ asset: as, id: id })
-        })
-        console.log(result.assets)
-        setFiles(tmpfiles);
+        setFiles((prevFiles) =>
+          [
+            ...prevFiles,
+            //@ts-ignore
+            ...result.assets.map((as, i) => ({
+              asset: as,
+              id: prevFiles.length + i + 1,
+            })),
+          ]
+        );
       }
     } catch (error) {
       console.error(error);
     }
   };
+  const removeFile = (id: number) => {
+    setFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
+  };
+  const renderFileItem = ({ item }: { item: { asset: Asset | null; id: number } }) => (
+    <View style={styles.filePreview}>
+      {item.asset?.type?.startsWith('image') ? (
+        <Image source={{ uri: item.asset.uri }} style={styles.thumbnail} />
+      ) : (
+        <View style={[styles.thumbnail, styles.videoPlaceholder]}>
+          <Text style={styles.videoText}>Video</Text>
+        </View>
+      )}
+      <TouchableOpacity style={styles.removeButton} onPress={() => removeFile(item.id)}>
+        <IconButton icon="close" size={20} />
+      </TouchableOpacity>
+    </View>
+  );
   return (
     <>
-
-      <View style={{ flexDirection: 'row',width:'100%', justifyContent: 'space-around', marginVertical: 10 }}>
+      <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-around', marginVertical: 10 }}>
         <View style={{ alignItems: 'center' }}>
           <IconButton
-            icon="camera"
+            icon="camera-outline"
             mode="contained"
             size={30}
             onPress={() => {
@@ -89,14 +108,14 @@ function SelectMediaComponent({
                 maxWidth: 800,
                 maxHeight: 800,
                 quality: 0.8,
-              })
+              });
             }}
           />
           <Text>Capture</Text>
         </View>
         <View style={{ alignItems: 'center' }}>
           <IconButton
-            icon="camera"
+            icon="video-outline"
             mode="contained"
             size={30}
             onPress={() => {
@@ -105,29 +124,69 @@ function SelectMediaComponent({
                 maxWidth: 800,
                 maxHeight: 800,
                 quality: 0.8,
-              })
+              });
             }}
           />
           <Text>Record</Text>
         </View>
         <View style={{ alignItems: 'center' }}>
           <IconButton
-            icon="image"
+            icon="image-outline"
             mode="contained"
             size={30}
-            onPress={() => selectMedia('gallery', {
-              mediaType: 'photo',
-              maxWidth: 800,
-              maxHeight: 800,
-              quality: 0.8,
-            })}
+            onPress={() =>
+              selectMedia('gallery', {
+                mediaType: 'photo',
+                maxWidth: 800,
+                maxHeight: 800,
+                quality: 0.8,
+              })
+            }
           />
           <Text>Gallery</Text>
         </View>
-
       </View>
+
+      {/* File Previews */}
+      <FlatList
+        data={files}
+        keyExtractor={(item) => item.id.toString()}
+        horizontal
+        renderItem={renderFileItem}
+        contentContainerStyle={styles.previewContainer}
+      />
     </>
   );
 }
+const styles = StyleSheet.create({
+  previewContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+  },
+  filePreview: {
+    position: 'relative',
+    marginRight: 10,
+  },
+  thumbnail: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    backgroundColor: '#f0f0f0',
+  },
+  videoPlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ddd',
+  },
+  videoText: {
+    color: '#555',
+    fontWeight: 'bold',
+  },
+  removeButton: {
+    position: 'absolute',
+    top: -10,
+    right: -10,
+  },
+});
 
 export default SelectMediaComponent;
