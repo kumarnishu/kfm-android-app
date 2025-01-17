@@ -55,7 +55,7 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
 
   useEffect(() => {
     if (isSuccess) {
-      setAlert({ message: ` Created customer as ${formik.values.name}  successfully`, color: 'error' });
+      setAlert({ message: ` Created customer as ${formik.values.name}  successfully`, color: 'success' });
       formik.resetForm()
       setDialog(undefined)
     }
@@ -125,11 +125,13 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
           mode="contained"
           buttonColor="red"
           style={styles.button}
-          onPress={() => formik.handleSubmit()}
+          onPress={() => {
+            !formik.isValid ? setDialog(undefined) : formik.handleSubmit()
+          }}
           loading={isLoading}
           disabled={isLoading}
         >
-          Submit
+          {!formik.isValid ? 'Close' : 'Submit'}
         </Button>
       </ScrollView>
     </>
@@ -137,7 +139,7 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
 }
 const styles = StyleSheet.create({
   container: {
-    flex:1,
+    flex: 1,
     padding: 10,
     backgroundColor: '#f9f9f9',
   },

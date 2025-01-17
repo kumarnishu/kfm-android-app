@@ -11,7 +11,7 @@ type Props = {
 function CreateOrEditRegisteredProductDialog({ product, dialog, setDialog }: Props) {
     
     return (
-        <Dialog fullScreen visible={dialog === 'CreateOrEditRegisteredProductDialog'} handleClose={() => setDialog(undefined)}
+       <Dialog fullScreen={false} visible={dialog === 'CreateOrEditRegisteredProductDialog'} handleClose={() => setDialog(undefined)}
         >
             <CreateOrEditRegisteredProductForm  product={product} setDialog={setDialog} />
         </Dialog>

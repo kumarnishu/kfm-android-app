@@ -11,7 +11,7 @@ type Props = {
 function CreateOrEditSpareDialog({ part, dialog,setDialog }: Props) {
     
     return (
-        <Dialog fullScreen visible={dialog === 'CreateOrEditSpareDialog'} handleClose={() => setDialog(undefined)}
+       <Dialog fullScreen={false} visible={dialog === 'CreateOrEditSpareDialog'} handleClose={() => setDialog(undefined)}
         >
             <CreateOrEditSparePartForm part={part}  setDialog={setDialog} />
         </Dialog>

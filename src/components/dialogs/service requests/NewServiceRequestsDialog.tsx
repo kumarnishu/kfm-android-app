@@ -11,7 +11,7 @@ type Props = {
 function NewServiceRequestsDialog({ product, dialog, setDialog }: Props) {
 
     return (
-        <Dialog fullScreen visible={dialog === 'NewServiceRequestsDialog'} handleClose={() => setDialog(undefined)}
+       <Dialog fullScreen={false} visible={dialog === 'NewServiceRequestsDialog'} handleClose={() => setDialog(undefined)}
         >
             {product && <NewServiceRequestsForm product={product} setDialog={setDialog} />}
         </Dialog>
