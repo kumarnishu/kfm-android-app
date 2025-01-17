@@ -10,15 +10,16 @@ import { UserContext } from '../contexts/UserContext';
 import { PublicStackParamList } from '../navigation/AppNavigator';
 import { CheckOtpAndLogin, SendOtp } from '../services/UserService';
 import { GetUserDto } from '../dto/UserDto';
+import { AlertContext } from '../contexts/AlertContext';
 
 type Props = StackScreenProps<PublicStackParamList, 'OtpVerifyScreen'>;
 
 const OtpVerifyScreen = ({ route }: Props) => {
     const { hash, otp, timeoutError, stopListener, startListener } = useOtpVerify({ numberOfDigits: 6 });
+    const { setAlert } = useContext(AlertContext)
     const { mobile } = route.params;
     const { setUser } = useContext(UserContext)
     const [isLoading, setIsLoading] = useState(true)
-    const [message, setMessage] = useState<string | undefined>()
     const { mutate, data, isSuccess, error } = useMutation<
         AxiosResponse<{ user: GetUserDto; token: string }>,
         BackendError,
@@ -79,19 +80,7 @@ const OtpVerifyScreen = ({ route }: Props) => {
     }, [isSuccess, error]);
     return (
         <>
-            {message && <Snackbar
-                visible={message ? true : false}
-                onDismiss={() => setMessage(undefined)}
-                action={{
-                    label: 'Close',
-                    onPress: () => {
-                        setMessage(undefined)
-                    },
-                }}
-                duration={3000} // Optional: Snackbar duration (in milliseconds)
-            >
-                {message}
-            </Snackbar>}
+           
             <View style={{ flex: 1, padding: 20, flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
                 {timeoutError && <Text style={{ color: 'red' }}>Otp Timedout !! Retry</Text>} 
                  <ActivityIndicator size={'large'} style={{ margin: 10 }} color='red' />

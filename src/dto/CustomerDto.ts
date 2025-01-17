@@ -4,11 +4,10 @@ export type GetCustomerDto = {
     _id: string,
     name: string,
     address: string,
-    gst: string,
-    pincode: number,
     email: string,
     mobile: string,
     users: number,
+    owner:string,
     is_active: boolean,
     created_at: string,
     updated_at: string,
@@ -19,8 +18,6 @@ export type GetCustomerDto = {
 export type CreateOrEditCustomerDto = {
     name: string,
     address: string,
-    gst: string,
-    pincode: number,
     email: string,
     mobile: string,
 }

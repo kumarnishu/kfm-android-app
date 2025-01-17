@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image, ScrollView } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { AuthenticatedStackParamList } from '../../navigation/AppNavigator';
 import { useQuery } from 'react-query';
@@ -8,6 +8,7 @@ import { GetServiceRequestDetailedDto } from '../../dto/ServiceRequestDto';
 import { BackendError } from '../../..';
 import { GetServiceRequest } from '../../services/ServiceRequestService';
 import { ActivityIndicator, Button, Text } from 'react-native-paper';
+import Video from 'react-native-video';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'ServiceRequestDetailsScreen'>;
 
@@ -44,10 +45,26 @@ const ServiceRequestDetailsScreen: React.FC<Props> = ({ route, navigation }) => 
   return (
     <>
 
-      {request && <View style={styles.container}>
+      {request && <ScrollView style={styles.container}>
         <Text style={styles.title}>{request?.request_id}</Text>
-        <Text>{request ? request.product.machine_photo : ""}</Text>
-      </View>}
+        <Text>Problems</Text>
+        {request.problem.photos && request.problem.photos.map((p) => {
+          return (
+            <Image source={{ uri: p }} height={300} width={200} />
+          )
+        })}
+        {request.problem.videos && request.problem.videos.map((p) => {
+          return (
+            <Video
+              key={p}
+              source={{ uri: p }}
+              style={{ width: '100%', height: 300 }} // Apply dynamic width and height
+              resizeMode="cover" // Ensures the video covers the screen while maintaining aspect ratio
+              controls={true}
+            />
+          )
+        })}
+      </ScrollView>}
     </>
   );
 };

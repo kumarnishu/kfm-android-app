@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { GetCustomerDto } from '../../../dto/CustomerDto';
 import Dialog from '../../Dialog';
 import CreateOrEditCustomerForm from '../../forms/customers/CreateOrEditCustomerForm';
+import { Alert } from 'react-native';
 
 type Props = {
     dialog: string | undefined,
@@ -9,6 +11,7 @@ type Props = {
 }
 
 function CreateOrEditCustomerDialog({ customer, dialog, setDialog }: Props) {
+   
     return (
         <Dialog fullScreen visible={dialog === 'CreateOrEditCustomerDialog'} handleClose={() => setDialog(undefined)}
         >

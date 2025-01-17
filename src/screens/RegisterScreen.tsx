@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, TextInput, HelperText, Text, Snackbar, Divider } from 'react-native-paper';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -10,19 +10,20 @@ import { BackendError } from '../..';
 import { PublicStackParamList } from '../navigation/AppNavigator';
 import { CreateOrEditCustomer } from '../services/CustomerService';
 import { CreateOrEditCustomerDto } from '../dto/CustomerDto';
+import { AlertContext } from '../contexts/AlertContext';
 
 type Props = StackScreenProps<PublicStackParamList, 'RegisterScreen'>;
 
 
 function RegisterScreen({ navigation }: Props) {
-  const [message, setMessage] = useState<string | undefined>()
+  const { setAlert } = useContext(AlertContext)
   const { mutate, isSuccess, isLoading } = useMutation<
     AxiosResponse<{ message: string }>,
     BackendError,
     { id?: string, body: CreateOrEditCustomerDto }
   >(CreateOrEditCustomer, {
     onError: ((error) => {
-      error && setMessage(error.response.data.message || "")
+      error && setAlert({ message: error.response.data.message || "", color: 'error' })
     })
   });
 
@@ -31,9 +32,7 @@ function RegisterScreen({ navigation }: Props) {
     initialValues: {
       name: "",
       email: "",
-      gst: "",
       mobile: "",
-      pincode: 0,
       address: "",
 
     },
@@ -46,7 +45,7 @@ function RegisterScreen({ navigation }: Props) {
       mobile: Yup.string().required('mobile is required').min(10, 'mobile must be 10 digits').max(10, 'mobile must be 10 digits').matches(/^[0-9]+$/, 'mobile must be a number'),
     }),
     onSubmit: (values) => {
-      mutate({body:values});
+      mutate({ body: values });
     },
   });
 
@@ -66,19 +65,7 @@ function RegisterScreen({ navigation }: Props) {
 
   return (
     <>
-      {message && <Snackbar
-        visible={message ? true : false}
-        onDismiss={() => setMessage(undefined)}
-        action={{
-          label: 'Close',
-          onPress: () => {
-            setMessage(undefined)
-          },
-        }}
-        duration={3000} // Optional: Snackbar duration (in milliseconds)
-      >
-        {message}
-      </Snackbar>}
+
       <ScrollView>
         <View style={{ flex: 1, justifyContent: 'center', padding: 10, gap: 2 }}>
           <Text style={{ fontSize: 30, textAlign: 'center', padding: 20, fontWeight: 'bold' }}>Create Account</Text>
@@ -119,29 +106,7 @@ function RegisterScreen({ navigation }: Props) {
             {formik.errors.mobile}
           </HelperText>}
 
-          <TextInput
-            label="Enter your gst number"
-            mode="outlined"
-            value={formik.values.gst}
-            onChangeText={formik.handleChange('gst')}
-            onBlur={formik.handleBlur('gst')}
-            error={formik.touched.gst && Boolean(formik.errors.gst)}
-          />
-          {formik.touched.gst && Boolean(formik.errors.gst) && < HelperText type="error">
-            {formik.errors.gst}
-          </HelperText>}
-          <TextInput
-            label="Enter your pincode "
-            mode="outlined"
-            keyboardType="number-pad"
-            value={String(formik.values.pincode)}
-            onChangeText={formik.handleChange('pincode')}
-            onBlur={formik.handleBlur('pincode')}
-            error={formik.touched.pincode && Boolean(formik.errors.pincode)}
-          />
-          {formik.touched.pincode && Boolean(formik.errors.pincode) && < HelperText type="error">
-            {formik.errors.pincode}
-          </HelperText>}
+
           <TextInput
             label="Enter your address"
             mode="outlined"

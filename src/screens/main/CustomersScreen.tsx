@@ -6,12 +6,13 @@ import { UserContext } from '../../contexts/UserContext';
 import { AuthenticatedStackParamList } from '../../navigation/AppNavigator';
 import { useQuery } from 'react-query';
 import { AxiosResponse } from 'axios';
-import { Avatar, Button, Card, TextInput } from 'react-native-paper';
+import { Button, Card, TextInput } from 'react-native-paper';
 import FuzzySearch from 'fuzzy-search';
 import { GetAllCustomers } from '../../services/CustomerService';
 import { BackendError } from '../../..';
 import { GetCustomerDto } from '../../dto/CustomerDto';
 import CreateOrEditCustomerDialog from '../../components/dialogs/customers/CreateOrEditCustomerDialog';
+import { toTitleCase } from '../../utils/toTitleCase';
 
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'CustomersScreen'>;
@@ -38,7 +39,7 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
 
   useEffect(() => {
     if (filter) {
-      const searcher = new FuzzySearch(customers, ['name', 'address'], {
+      const searcher = new FuzzySearch(customers, ['name', 'address', 'email'], {
         caseSensitive: false,
       });
       const result = searcher.search(filter);
@@ -56,22 +57,12 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
   }, [isSuccess, data])
   // Render each customer as a card
   const renderCustomer = ({ item }: { item: GetCustomerDto }) => (
-
     <Card style={styles.card} onPress={() => navigation.navigate('CustomerDetailsScreen', { id: item._id })}>
-      <Card.Title
-        style={{ width: '100%' }}
-        title={item.name || "Customer"}
-        subtitle={`Members : ${item.users || "0"}`}
-        subtitleStyle={{ color: 'black' }}
-        left={(props) => (
-          <Avatar.Text
-            {...props}
-            label={item.name ? item.name.charAt(0).toUpperCase() : "C"}
-          />
-        )}
-      />
       <Card.Content>
-        <Text style={{ marginLeft: 56 }}>Address : {item.address || "0"}</Text>
+        <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{toTitleCase(item.name || "") || "Customer"}</Text>
+        <Text>{`Location : ${item.address || "Not available"}`}</Text>
+        <Text>Email : {item.email || "Not available"}</Text>
+        <Text style={{ textAlign: 'right', color: 'grey' }} > {item.users || "0"} Members</Text>
       </Card.Content>
     </Card>
   );
@@ -96,28 +87,32 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
       </View>
     );
   }
-
   return (
-    <Surface elevation={2} style={styles.container}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
-        <Text style={styles.title}>Customers</Text>
-        {user?.role == "admin" && <Button onPress={() => setDialog('CreateOrEditCustomerDialog')}>+New</Button>}
-      </View>
-      <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
+    <>
+      <Surface elevation={2} style={styles.container}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
+          <Text style={styles.title}>Customers</Text>
+          {user?.role == "admin" && <Button onPress={() => {
+            setDialog('CreateOrEditCustomerDialog')
+          }}>+New</Button>}
+        </View>
+        <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 
 
-      {customers && <FlatList
-        data={customers}
-        keyExtractor={(item) => item._id.toString()}
-        renderItem={renderCustomer}
-        refreshing={refreshing} // Indicates if the list is refreshing
-        onRefresh={onRefresh} // Handler for pull-to-refresh
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>No customers found.</Text>
-        }
-      />}
+        {customers && <FlatList
+          data={customers}
+          keyExtractor={(item) => item._id.toString()}
+          renderItem={renderCustomer}
+          refreshing={refreshing} // Indicates if the list is refreshing
+          onRefresh={onRefresh} // Handler for pull-to-refresh
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>No customers found.</Text>
+          }
+        />}
+      </Surface >
       <CreateOrEditCustomerDialog dialog={dialog} setDialog={setDialog} />
-    </Surface >
+    </>
+
   );
 };
 

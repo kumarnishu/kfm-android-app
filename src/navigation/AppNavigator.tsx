@@ -27,8 +27,9 @@ import ServiceRequestDetailsScreen from '../screens/details/ServiceRequestDetail
 import ServiceRequestsScreen from '../screens/main/ServiceRequestsScreen';
 import StaffDetailsScreen from '../screens/details/StaffDetailsScreen';
 import StaffsScreen from '../screens/main/StaffsScreen';
-import { Snackbar } from 'react-native-paper';
+import { Modal, Portal, Snackbar } from 'react-native-paper';
 import { AlertContext } from '../contexts/AlertContext';
+import { Alert, StyleSheet } from 'react-native';
 
 export type AuthenticatedStackParamList = {
   HomeScreen: undefined;
@@ -112,29 +113,37 @@ const AppNavigator = () => {
         <VideoLoader videoUrl='https://www.w3schools.com/html/mov_bbb.mp4' />
       </NavigationContainer>
     )
-
+    
+  console.log(alert)
   return (
     <NavigationContainer ref={navigationRef}>
-      {alert && (
-        <Snackbar
-          visible={!!alert}
-          onDismiss={() => setAlert(undefined)}
-          action={{
-            label: 'Close',
-            onPress: () => setAlert(undefined),
-          }}
-          duration={2000}
-        >
-          {alert.message}
-        </Snackbar>
-      )}
+
       {user ? <>
         <Navbar />
         <AuthenticatedNavigator />
       </> : <PublicNavigator />}
+      {alert && (
+
+        <Portal>
+          <Snackbar style={{
+            backgroundColor: alert.color == 'error' ? 'red' : 'green'
+          }}
+            visible={!!alert}
+            onDismiss={() => setAlert(undefined)}
+            action={{
+              label: 'Close',
+              onPress: () => setAlert(undefined),
+            }}
+            duration={3000}
+          >
+            {alert.message}
+          </Snackbar>
+        </Portal>
+      )}
     </NavigationContainer>
   );
 
 };
+
 
 export default AppNavigator;

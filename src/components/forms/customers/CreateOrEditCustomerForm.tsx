@@ -1,176 +1,171 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, TextInput, HelperText, Text, Snackbar, Divider } from 'react-native-paper';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation } from 'react-query';
 import { AxiosResponse } from 'axios';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { BackendError } from '../../../..';
 import { CreateOrEditCustomerDto, GetCustomerDto } from '../../../dto/CustomerDto';
 import { CreateOrEditCustomer } from '../../../services/CustomerService';
-
+import { AlertContext } from '../../../contexts/AlertContext';
+import { queryClient } from '../../../App';
 
 function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCustomerDto, setDialog: React.Dispatch<React.SetStateAction<string | undefined>> }) {
-  const [message, setMessage] = useState<string | undefined>()
+  const { setAlert } = useContext(AlertContext)
   const { mutate, isSuccess, isLoading } = useMutation<
     AxiosResponse<{ message: string }>,
     BackendError,
     { id?: string, body: CreateOrEditCustomerDto }
   >(CreateOrEditCustomer, {
-    onError: ((error) => {
-      error && setMessage(error.response.data.message || "")
-    })
+    onSuccess: () => {
+      queryClient.invalidateQueries('customers')
+    },
+    onError: (error) => {
+      error && setAlert({ message: error.response.data.message || "", color: 'error' })
+      //setDialog(undefined)
+    }
   });
-
 
   const formik = useFormik({
     initialValues: {
       name: customer ? customer.name : "",
       email: customer ? customer.email : "",
-      gst: customer ? customer.gst : "",
       mobile: customer ? customer.mobile : "",
-      pincode: customer ? customer.pincode : 0,
       address: customer ? customer.address : "",
-
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Required').min(4).max(100),
       email: Yup.string().required('Required').email('Invalid email'),
-      gst: Yup.string().required('Required 15 digit gst number').min(15).max(15),
       address: Yup.string().required('Required Address').min(4).max(300),
-      pincode: Yup.number().required('Required 6 digit pincode').min(100000).max(999999),
-      mobile: Yup.string().required('mobile is required').min(10, 'mobile must be 10 digits').max(10, 'mobile must be 10 digits').matches(/^[0-9]+$/, 'mobile must be a number'),
+      mobile: Yup.string()
+        .required('Mobile is required')
+        .min(10, 'Mobile must be 10 digits')
+        .max(10, 'Mobile must be 10 digits')
+        .matches(/^[0-9]+$/, 'Mobile must be a number'),
     }),
     onSubmit: (values) => {
-      if (customer?._id)
+      if (customer)
         mutate({ id: customer?._id, body: values });
+      else
+        mutate({ body: values });
+
     },
   });
 
   useEffect(() => {
     if (isSuccess) {
-      setMessage(`${formik.values.name} ThankYou for joining With us !!`)
-      setTimeout(() => {
-        {
-          formik.resetForm()
-        }
-      }, 3000);
+      setAlert({ message: ` Created customer as ${formik.values.name}  successfully`, color: 'error' });
+      formik.resetForm()
       setDialog(undefined)
     }
-
   }, [isSuccess]);
-
-
   return (
     <>
-      {message && <Snackbar
-        visible={message ? true : false}
-        onDismiss={() => setMessage(undefined)}
-        action={{
-          label: 'Close',
-          onPress: () => {
-            setMessage(undefined)
-          },
-        }}
-        duration={2000} // Optional: Snackbar duration (in milliseconds)
-      >
-        {message}
-      </Snackbar>}
-      <ScrollView>
-        <View style={{ flex: 1, justifyContent: 'center', padding: 10, gap: 2 }}>
-          <Text style={{ fontSize: 30, textAlign: 'center', padding: 20, fontWeight: 'bold' }}>Customer</Text>
-          <TextInput
-            label="Enter you name"
-            mode="outlined"
-            value={formik.values.name}
-            onChangeText={formik.handleChange('name')}
-            onBlur={formik.handleBlur('name')}
-            error={formik.touched.name && Boolean(formik.errors.name)}
-          />
-          {formik.touched.name && Boolean(formik.errors.name) && <HelperText type="error" >
-            {formik.errors.name}
-          </HelperText>}
 
-          <TextInput
-            label="Enter your email"
-            mode="outlined"
-            value={formik.values.email}
-            onChangeText={formik.handleChange('email')}
-            onBlur={formik.handleBlur('email')}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-          />
-          {formik.touched.email && Boolean(formik.errors.email) && <HelperText type="error" >
-            {formik.errors.email}
-          </HelperText>}
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.headerText}>Customer Form</Text>
+        <TextInput
+          label="Name"
+          mode="outlined"
+          value={formik.values.name}
+          onChangeText={formik.handleChange('name')}
+          onBlur={formik.handleBlur('name')}
+          error={formik.touched.name && !!formik.errors.name}
+          style={styles.input}
+        />
+        {formik.touched.name && formik.errors.name && (
+          <HelperText type="error">{formik.errors.name}</HelperText>
+        )}
 
-          <TextInput
-            label="Enter your mobile"
-            mode="outlined"
-            keyboardType="number-pad"
-            value={formik.values.mobile}
-            onChangeText={formik.handleChange('mobile')}
-            onBlur={formik.handleBlur('mobile')}
-            error={formik.touched.mobile && Boolean(formik.errors.mobile)}
-          />
-          {formik.touched.mobile && Boolean(formik.errors.mobile) && <HelperText type="error" >
-            {formik.errors.mobile}
-          </HelperText>}
+        <TextInput
+          label="Email"
+          mode="outlined"
+          value={formik.values.email}
+          onChangeText={formik.handleChange('email')}
+          onBlur={formik.handleBlur('email')}
+          error={formik.touched.email && !!formik.errors.email}
+          style={styles.input}
+        />
+        {formik.touched.email && formik.errors.email && (
+          <HelperText type="error">{formik.errors.email}</HelperText>
+        )}
 
-          <TextInput
-            label="Enter your gst number"
-            mode="outlined"
-            value={formik.values.gst}
-            onChangeText={formik.handleChange('gst')}
-            onBlur={formik.handleBlur('gst')}
-            error={formik.touched.gst && Boolean(formik.errors.gst)}
-          />
-          {formik.touched.gst && Boolean(formik.errors.gst) && < HelperText type="error">
-            {formik.errors.gst}
-          </HelperText>}
-          <TextInput
-            label="Enter your pincode "
-            mode="outlined"
-            keyboardType="number-pad"
-            value={String(formik.values.pincode)}
-            onChangeText={formik.handleChange('pincode')}
-            onBlur={formik.handleBlur('pincode')}
-            error={formik.touched.pincode && Boolean(formik.errors.pincode)}
-          />
-          {formik.touched.pincode && Boolean(formik.errors.pincode) && < HelperText type="error">
-            {formik.errors.pincode}
-          </HelperText>}
-          <TextInput
-            label="Enter your address"
-            mode="outlined"
-            multiline
-            style={{ height: 100 }}
-            numberOfLines={4}
-            value={formik.values.address}
-            onChangeText={formik.handleChange('address')}
-            onBlur={formik.handleBlur('address')}
-            error={formik.touched.address && Boolean(formik.errors.address)}
-          />
-          {formik.touched.address && Boolean(formik.errors.address) && < HelperText type="error">
-            {formik.errors.address}
-          </HelperText>}
-          <Divider style={{ marginVertical: 10 }} />
-          <Button
-            mode="contained"
-            buttonColor='red'
-            style={{ padding: 5, borderRadius: 10 }}
-            onPress={() => formik.handleSubmit()}
-            loading={isLoading}
-            disabled={isLoading}
-          >
-            Submit
-          </Button>
+        <TextInput
+          label="Mobile"
+          mode="outlined"
+          keyboardType="number-pad"
+          value={formik.values.mobile}
+          onChangeText={formik.handleChange('mobile')}
+          onBlur={formik.handleBlur('mobile')}
+          error={formik.touched.mobile && !!formik.errors.mobile}
+          style={styles.input}
+        />
+        {formik.touched.mobile && formik.errors.mobile && (
+          <HelperText type="error">{formik.errors.mobile}</HelperText>
+        )}
 
-        </View>
-      </ScrollView >
+        <TextInput
+          label="Address"
+          mode="outlined"
+          multiline
+          numberOfLines={4}
+          value={formik.values.address}
+          onChangeText={formik.handleChange('address')}
+          onBlur={formik.handleBlur('address')}
+          error={formik.touched.address && !!formik.errors.address}
+          style={[styles.input, styles.textArea]}
+        />
+        {formik.touched.address && formik.errors.address && (
+          <HelperText type="error">{formik.errors.address}</HelperText>
+        )}
+
+        <Divider style={styles.divider} />
+        <Button
+          mode="contained"
+          buttonColor="red"
+          style={styles.button}
+          onPress={() => formik.handleSubmit()}
+          loading={isLoading}
+          disabled={isLoading}
+        >
+          Submit
+        </Button>
+      </ScrollView>
     </>
   );
 }
-
+const styles = StyleSheet.create({
+  container: {
+    flex:1,
+    padding: 10,
+    backgroundColor: '#f9f9f9',
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+    color: '#333',
+  },
+  input: {
+    marginBottom: 16,
+  },
+  textArea: {
+    height: 120,
+  },
+  divider: {
+    marginVertical: 20,
+    backgroundColor: '#ddd',
+  },
+  button: {
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  snackbar: {
+    backgroundColor: '#323232',
+  },
+});
 
 
 export default CreateOrEditCustomerForm;
