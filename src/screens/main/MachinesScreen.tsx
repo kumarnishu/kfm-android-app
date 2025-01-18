@@ -61,7 +61,7 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.textContainer}>
           <Title style={styles.title}>{item.name}</Title>
           <Paragraph style={styles.paragraph}>Model No : {item.model}</Paragraph>
-          <Button mode='text'  rippleColor="transparent" onPress={() => {
+          <Button mode='text' rippleColor="transparent" onPress={() => {
             setMachine(item)
             setDialog('CreateOrEditMachineDialog')
           }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
@@ -95,25 +95,25 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
     <View style={styles.container}>
       {/* Title */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
-        <Text style={styles.title}>Machines</Text>
-        {user?.role == "admin" && 
-         <MaterialIcons
-         name="add-circle"
-         size={40}
-         color="red"
-         onPress={() => {
-          setMachine(undefined)
-          setDialog('CreateOrEditMachineDialog')
-         }}
-       />
+         <Text style={{ fontSize: 20, fontWeight: 'bold',paddingBottom:20 }}>Machines</Text>
+        {user?.role == "admin" &&
+          <MaterialIcons
+            name="add-circle"
+            size={40}
+            color="red"
+            onPress={() => {
+              setMachine(undefined)
+              setDialog('CreateOrEditMachineDialog')
+            }}
+          />
 
-       }
+        }
       </View>
-      <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
+      <TextInput mode="flat" placeholder='Search' style={{ backgroundColor: 'white', marginBottom: 10 }} onChangeText={(val) => setFilter(val)} />
 
 
       {/* Engineer List */}
-      {machines&&<FlatList
+      {machines && <FlatList
         data={machines}
         keyExtractor={(item) => item._id.toString()}
         renderItem={renderEngineer}
@@ -129,21 +129,33 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
     backgroundColor: '#f9f9f9',
   },
+  card: {
+    marginBottom: 16,
+    backgroundColor: 'white',
+    borderRadius: 12, // Rounded corners
+    elevation: 4, // Android shadow
+    shadowColor: '#000', // iOS shadow
+    shadowOffset: { width: 0, height: 2 }, // iOS shadow offset
+    shadowOpacity: 0.2, // iOS shadow opacity
+    shadowRadius: 4, // iOS shadow radius
+    overflow: 'hidden', // Prevent content from overflowing rounded corners
+  },
   cardContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: 16, // Add padding inside the card
   },
   image: {
-    width: 150,
-    height: 150,
-    borderColor: 'red',
+    width: 120,
+    height: 120,
+    borderRadius: 8, // Rounded image corners
+    borderColor: '#ddd', // Light border
     borderWidth: 1,
     marginRight: 15,
   },
@@ -152,35 +164,31 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
   },
-  card: {
-    marginBottom: 16,
-    backgroundColor: 'white',
-    elevation: 2,
-    borderRadius: 8,
+  paragraph: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 10,
+    textTransform: 'capitalize',
+  },
+  button: {
+    alignSelf: 'flex-end',
+    marginTop: 8,
   },
   loader: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-
-  paragraph: {
-    paddingLeft: 2,
-    textTransform: 'capitalize',
-    color: 'black'
-  },
   emptyText: {
     textAlign: 'center',
     marginTop: 20,
     fontSize: 16,
     color: '#888',
-  },
-  toggleButton: {
-    marginTop: 16,
   },
 });
 export default MachinesScreen;

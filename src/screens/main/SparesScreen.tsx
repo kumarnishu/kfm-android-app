@@ -14,6 +14,7 @@ import { GetSparePartDto } from '../../dto/SparePartDto';
 import CreateOrEditSpareDialog from '../../components/dialogs/spares/CreateOrEditSpareDialog';
 import EditSparePartsMachinesDialog from '../../components/dialogs/spares/EditSparePartsMachinesDialog';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { toTitleCase } from '../../utils/toTitleCase';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'SparesScreen'>;
 
@@ -57,22 +58,18 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
   const renderEngineer = ({ item }: { item: GetSparePartDto }) => (
 
     <Card style={styles.card}>
-      <Image style={styles.image} source={item.photo !== "" ? { uri: item.photo } : require("../../assets/img/placeholder.png")} />
-      <Card.Content style={styles.cardContent} >
-        <Title style={styles.title}>{item.name}</Title>
-        <Paragraph style={styles.paragraph}>Part No : {item.partno}</Paragraph>
-        {item.compatible_machines && <Text style={styles.paragraph}>Compatibility : {item.compatible_machines.length}</Text>}
-        <Paragraph style={styles.rupees}>{formatter.format(item.price) + " Rs"}</Paragraph>
-        <Button onPress={() => {
-          setSpare(item)
-          setDialog('CreateOrEditSpareDialog')
-        }} labelStyle={{ width: '100%', textAlign: 'right' }} mode='text'  rippleColor="transparent">Edit</Button>
-        <Button onPress={() => {
-          setSpare(item)
-          setSelectedMachines(item.compatible_machines.map((i) => { return i.id }))
-          setDialog('EditSparePartsMachinesDialog')
-        }} labelStyle={{ width: '100%', textAlign: 'right' }} mode='text'  rippleColor="transparent">Edit Machines</Button>
+      <Title style={styles.title}>{toTitleCase(item.name || "")}</Title>
+      <Card.Content style={styles.cardContent}>
+        <Image style={styles.image} source={item.photo !== "" ? { uri: item.photo } : require("../../assets/img/placeholder.png")} />
+        <View style={styles.textContainer}>
 
+          <Text style={styles.paragraph}>PART NO : {item.partno}</Text>
+          <Text style={styles.paragraph}>Est. Price : {item.price} rs.</Text>
+          <Button mode='text' rippleColor="transparent" onPress={() => {
+            setSpare(item)
+            setDialog('CreateOrEditSpareDialog')
+          }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
+        </View>
       </Card.Content>
     </Card>
   );
@@ -99,28 +96,28 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <Surface elevation={2} style={styles.container}>
 
       {/* Title */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
-        <Text style={styles.title}>Spares</Text>
-        {user?.role == "admin" && 
-         <MaterialIcons
-         name="add-circle"
-         size={40}
-         color="red"
-         onPress={() => {
-          setSpare(undefined)
-          setDialog('CreateOrEditSpareDialog')
-         }}
-       />
-}
+        <Text style={{ fontSize: 20, fontWeight: 'bold',paddingBottom:20 }}>Spares</Text>
+        {user?.role == "admin" &&
+          <MaterialIcons
+            name="add-circle"
+            size={40}
+            color="red"
+            onPress={() => {
+              setSpare(undefined)
+              setDialog('CreateOrEditSpareDialog')
+            }}
+          />
+        }
       </View>
-      <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
+       <TextInput mode="flat" placeholder='Search' style={{ backgroundColor: 'white', marginBottom: 10 }} onChangeText={(val) => setFilter(val)} />
 
 
       {/* Engineer List */}
-      {spares&&<FlatList
+      {spares && <FlatList
         data={spares}
         keyExtractor={(item) => item._id.toString()}
         renderItem={renderEngineer}
@@ -132,9 +129,10 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
       />}
       {spare && <EditSparePartsMachinesDialog selectedMachines={selectedMachines} setSelectedMachines={setSelectedMachines} part={spare} dialog={dialog} setDialog={setDialog} />}
       <CreateOrEditSpareDialog part={spare} dialog={dialog} setDialog={setDialog} />
-    </View>
+    </Surface>
   );
 };
+
 
 
 const styles = StyleSheet.create({
@@ -143,48 +141,53 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#f9f9f9',
   },
+  card: {
+    marginBottom: 16,
+    backgroundColor: 'white',
+    borderRadius: 12, // Rounded corners
+    elevation: 4, // Android shadow
+    shadowColor: '#000', // iOS shadow
+    shadowOffset: { width: 0, height: 2 }, // iOS shadow offset
+    shadowOpacity: 0.2, // iOS shadow opacity
+    shadowRadius: 4, // iOS shadow radius
+    overflow: 'hidden', // Prevent content from overflowing rounded corners
+  },
   cardContent: {
-    width: '100%',
-    padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16, // Add padding inside the card
   },
   image: {
-    minHeight: 200,
-    maxHeight: 400,
-    borderColor: 'red',
+    width: 120,
+    height: 120,
+    borderRadius: 8, // Rounded image corners
+    borderColor: '#ddd', // Light border
     borderWidth: 1,
+    marginRight: 15,
   },
   textContainer: {
     flex: 1,
     paddingLeft: 10,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    textTransform: 'uppercase'
+    fontSize: 20,
+    marginLeft: 16,
+    fontWeight: '400',
+    color: '#333',
+    marginBottom: 8,
   },
-  card: {
-    marginBottom: 16,
-    backgroundColor: 'white',
-    elevation: 2,
-    borderRadius: 8,
+  paragraph: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  button: {
+    alignSelf: 'flex-end',
+    marginTop: 8,
   },
   loader: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-
-  paragraph: {
-    paddingLeft: 2,
-    textTransform: 'capitalize',
-    color: 'black',
-    overflow: 'scroll'
-  },
-  rupees: {
-    paddingLeft: 2,
-    textTransform: 'capitalize',
-    overflow: 'scroll'
   },
   emptyText: {
     textAlign: 'center',
@@ -192,7 +195,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#888',
   },
-  toggleButton: {
-    marginTop: 16,
-  },
-}); export default SparesScreen;
+});
+
+
+export default SparesScreen;

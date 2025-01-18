@@ -82,8 +82,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <Surface elevation={2} >
-      <Navbar />
       <ScrollView >
+        <Navbar />
         {data.map((card) => (
           //@ts-ignore
           <TouchableOpacity key={card.title} onPress={() => navigation.navigate(card.link)}>
