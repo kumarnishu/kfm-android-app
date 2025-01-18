@@ -4,6 +4,7 @@ import { Card, Paragraph, Surface, Title } from 'react-native-paper';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { AuthenticatedStackParamList } from '../navigation/AppNavigator';
 import { UserContext } from '../contexts/UserContext';
+import Navbar from '../components/NavBar';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'HomeScreen'>;
 
@@ -81,6 +82,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <Surface elevation={2} >
+      <Navbar />
       <ScrollView >
         {data.map((card) => (
           //@ts-ignore

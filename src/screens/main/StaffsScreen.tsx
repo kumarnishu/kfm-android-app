@@ -12,6 +12,7 @@ import { GetAllStaffs } from '../../services/CustomerService';
 import { GetUserDto } from '../../dto/UserDto';
 import { UserContext } from '../../contexts/UserContext';
 import CreateOrEditStaffDialog from '../../components/dialogs/customers/CreateOrEditStaffDialog';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 
 
@@ -74,7 +75,7 @@ const StaffsScreen: React.FC<Props> = ({ navigation }) => {
         <Button onPress={() => {
           setEngineer(item)
           setDialog('CreateOrEditStaffDialog')
-        }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit Engineer</Button>
+        }} labelStyle={{ width: '100%', textAlign: 'right' }} mode='text'  rippleColor="transparent">Edit Engineer</Button>
       </Card.Content>
     </Card>
   );
@@ -105,10 +106,18 @@ const StaffsScreen: React.FC<Props> = ({ navigation }) => {
       {/* Title */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
         <Text style={styles.title}>Staff Memebers</Text>
-        {user?.role == "owner" && <Button onPress={() => {
+        {user?.role == "owner" && 
+         <MaterialIcons
+         name="add-circle"
+         size={40}
+         color="red"
+         onPress={() => {
           setEngineer(undefined)
           setDialog('CreateOrEditStaffDialog')
-        }}>+New</Button>}
+         }}
+       />
+
+       }
       </View>
       <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 

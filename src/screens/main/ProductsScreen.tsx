@@ -13,6 +13,7 @@ import { GetRegisteredProductDto } from '../../dto/RegisteredProducDto';
 import CreateOrEditRegisteredProductDialog from '../../components/dialogs/products/CreateOrEditRegisteredProductDialog';
 import moment from 'moment';
 import NewServiceRequestsDialog from '../../components/dialogs/service requests/NewServiceRequestsDialog';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'ProductsScreen'>;
 
@@ -72,7 +73,7 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
           <Paragraph style={styles.paragraph}>{item.customer.label}</Paragraph>
           <Paragraph style={styles.paragraph}>{item.installationDate ? `Installation Date : ${moment(item.installationDate).format("DD-MM-YYYY")}` : 'Not Installed'}</Paragraph>
           <Paragraph style={styles.paragraph}>{item.warrantyUpto ? `Warranty upto : ${moment(item.warrantyUpto).format("DD-MM-YYYY")}` : 'Not Applicable'}</Paragraph>
-          <Button onPress={() => {
+          <Button mode='text'  rippleColor="transparent" onPress={() => {
             setProduct(item)
             setDialog('CreateOrEditRegisteredProductDialog')
           }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
@@ -114,10 +115,17 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
 
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
         <Text style={styles.title}>Registered Products</Text>
-        {user?.role == "admin" && <Button onPress={() => {
+        {user?.role == "admin" && 
+        <MaterialIcons
+        name="add-circle"
+        size={40}
+        color="red"
+        onPress={() => {
           setProduct(undefined)
           setDialog('CreateOrEditRegisteredProductDialog')
-        }}>+New</Button>}
+        }}
+      />
+      }
       </View>
       <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 

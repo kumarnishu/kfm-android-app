@@ -9,7 +9,6 @@ import HomeScreen from '../screens/HomeScreen';
 import { setupInterceptors } from '../services/utils/axiosIterceptor';
 import VideoLoader from '../components/VideoLoader';
 import CustomerDetailsScreen from '../screens/details/CustomerDetailsScreen';
-import Navbar from '../components/NavBar';
 import CustomersScreen from '../screens/main/CustomersScreen';
 import LoginScreen from '../screens/LoginScreen';
 import OtpVerifyScreen from '../screens/OtpVerifyScreen';
@@ -119,7 +118,7 @@ const AppNavigator = () => {
     <NavigationContainer ref={navigationRef}>
 
       {user ? <>
-        <Navbar />
+       
         <AuthenticatedNavigator />
       </> : <PublicNavigator />}
       {alert && (

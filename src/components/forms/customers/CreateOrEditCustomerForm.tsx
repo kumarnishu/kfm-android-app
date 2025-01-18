@@ -67,12 +67,14 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
         <Text style={styles.headerText}>Customer Form</Text>
         <TextInput
           label="Name"
+          placeholder="e.g., John Doe"
           mode="outlined"
           value={formik.values.name}
           onChangeText={formik.handleChange('name')}
           onBlur={formik.handleBlur('name')}
           error={formik.touched.name && !!formik.errors.name}
           style={styles.input}
+
         />
         {formik.touched.name && formik.errors.name && (
           <HelperText type="error">{formik.errors.name}</HelperText>
@@ -80,12 +82,14 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
 
         <TextInput
           label="Email"
+           placeholder="e.g., john.doe@example.com"
           mode="outlined"
           value={formik.values.email}
           onChangeText={formik.handleChange('email')}
           onBlur={formik.handleBlur('email')}
           error={formik.touched.email && !!formik.errors.email}
           style={styles.input}
+
         />
         {formik.touched.email && formik.errors.email && (
           <HelperText type="error">{formik.errors.email}</HelperText>
@@ -100,6 +104,7 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
           onBlur={formik.handleBlur('mobile')}
           error={formik.touched.mobile && !!formik.errors.mobile}
           style={styles.input}
+           placeholder="e.g., 1234567890"
         />
         {formik.touched.mobile && formik.errors.mobile && (
           <HelperText type="error">{formik.errors.mobile}</HelperText>
@@ -108,6 +113,7 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
         <TextInput
           label="Address"
           mode="outlined"
+          placeholder='e.g., Bahadurgarh haryana'
           multiline
           numberOfLines={4}
           value={formik.values.address}

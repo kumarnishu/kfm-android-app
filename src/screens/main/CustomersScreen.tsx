@@ -13,7 +13,7 @@ import { BackendError } from '../../..';
 import { GetCustomerDto } from '../../dto/CustomerDto';
 import CreateOrEditCustomerDialog from '../../components/dialogs/customers/CreateOrEditCustomerDialog';
 import { toTitleCase } from '../../utils/toTitleCase';
-
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'CustomersScreen'>;
 
@@ -56,7 +56,7 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
     }
   }, [isSuccess, data])
   // Render each customer as a card
-  const renderCustomer = ({ item }: { item: GetCustomerDto }) => (
+  const renderCard = ({ item }: { item: GetCustomerDto }) => (
     <Card style={styles.card} onPress={() => navigation.navigate('CustomerDetailsScreen', { id: item._id })}>
       <Card.Content>
         <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{toTitleCase(item.name || "") || "Customer"}</Text>
@@ -92,17 +92,22 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
       <Surface elevation={2} style={styles.container}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
           <Text style={styles.title}>Customers</Text>
-          {user?.role == "admin" && <Button onPress={() => {
-            setDialog('CreateOrEditCustomerDialog')
-          }}>+New</Button>}
+          {user?.role == "admin" &&  <MaterialIcons
+              name="add-circle"
+              size={40}
+              color="red"
+              onPress={() => {
+                setDialog('CreateOrEditCustomerDialog')
+              }}
+            />}
         </View>
-        <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
+        <TextInput mode="flat" placeholder='Search' style={{ backgroundColor: 'white', marginBottom: 10 }} onChangeText={(val) => setFilter(val)} />
 
 
         {customers && <FlatList
           data={customers}
           keyExtractor={(item) => item._id.toString()}
-          renderItem={renderCustomer}
+          renderItem={renderCard}
           refreshing={refreshing} // Indicates if the list is refreshing
           onRefresh={onRefresh} // Handler for pull-to-refresh
           ListEmptyComponent={

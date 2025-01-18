@@ -12,6 +12,8 @@ import { GetUserDto } from '../../dto/UserDto';
 import { GetAllEngineers } from '../../services/EngineerServices';
 import { UserContext } from '../../contexts/UserContext';
 import CreateOrEditEngineerDialog from '../../components/dialogs/engineers/CreateOrEditEngineerDialog';
+import { toTitleCase } from '../../utils/toTitleCase';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 
 
@@ -52,32 +54,23 @@ const EngineersScreen: React.FC<Props> = ({ navigation }) => {
       setPrefilteredEngineers(data.data)
     }
   }, [isSuccess, data])
-  // Render each engineer as a card
-  const renderEngineer = ({ item }: { item: GetUserDto }) => (
 
-    <Card style={styles.card}>
-      <Card.Title
-        style={{ width: '100%' }}
-        title={item.role == "admin" ? `${item.username.toUpperCase()}-(Admin)` : item.role == "engineer" ? `${item.username.toUpperCase()}-(Engineer)` : `${item.username.toUpperCase()}-(Engineer)` || "Member" + item.username.toUpperCase()}
-        subtitle={`Mob : ${item.mobile || "N/A"}`}
-        subtitleStyle={{ color: 'black', flexWrap: 'wrap' }}
-        left={(props) => (
-          <Avatar.Text
-            {...props}
-            label={item.username ? item.username.charAt(0).toUpperCase() : "C"}
-          />
-        )}
-      />
+  const renderCard = ({ item }: { item: GetUserDto }) => (
+    <Card style={styles.card} onPress={() => navigation.navigate('EngineerDetailsScreen', { id: item._id })}>
       <Card.Content>
-        <Text style={{ marginLeft: 56 }}>Company : {item.customer.label.toUpperCase() || ''}</Text>
-        <Text style={{ marginLeft: 56 }}>Email : {item.email || ''}</Text>
-        <Button onPress={() => {
-          setEngineer(item)
-          setDialog('CreateOrEditEngineerDialog')
-        }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
+        <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{item.role == "admin" ? `${item.username.toUpperCase()}-(Admin)` : item.role == "engineer" ? `${item.username.toUpperCase()}-(Engineer)` : `${item.username.toUpperCase()}-(Engineer)` || "Member" + item.username.toUpperCase()}</Text>
+        <Text>{`Email : ${item.email || "Not available"}`}</Text>
+        <Text>{`${toTitleCase(item.customer.label || "Not available")}`}</Text>
+        <Text style={{ color: 'grey' }} >Mobile : {item.mobile || "Not available"}</Text>
       </Card.Content>
+      <Button mode='text'  rippleColor="transparent" onPress={() => {
+        setEngineer(item)
+        setDialog('CreateOrEditEngineerDialog')
+
+      }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
     </Card>
   );
+
 
   // Handle loading and error states
   if (isLoading) {
@@ -105,19 +98,28 @@ const EngineersScreen: React.FC<Props> = ({ navigation }) => {
       {/* Title */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
         <Text style={styles.title}>Engineers</Text>
-        {user?.role == "admin" && <Button onPress={() => {
-          setEngineer(undefined)
-          setDialog('CreateOrEditEngineerDialog')
-        }}>+New</Button>}
+        {user?.role == "admin" &&
+        
+        <MaterialIcons
+                      name="add-circle"
+                      size={40}
+                      color="red"
+                      onPress={() => {
+                        setEngineer(undefined)
+                        setDialog('CreateOrEditEngineerDialog')
+                      }}
+                    />
+
+     }
       </View>
-      <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
+      <TextInput mode="flat" placeholder='Search' style={{ backgroundColor: 'white', marginBottom: 10 }} onChangeText={(val) => setFilter(val)} />
 
 
       {/* Engineer List */}
       {engineers && <FlatList
         data={engineers}
         keyExtractor={(item) => item._id.toString()}
-        renderItem={renderEngineer}
+        renderItem={renderCard}
         refreshing={refreshing} // Indicates if the list is refreshing
         onRefresh={onRefresh} // Handler for pull-to-refresh
         ListEmptyComponent={

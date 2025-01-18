@@ -32,9 +32,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   default: {
+    backgroundColor:'none',
     marginHorizontal: 15,
-    paddingBottom:150,
     marginVertical: 100,
+    height:'70%',
     shadowColor: '#000',
     shadowOffset: {
       width: 2,

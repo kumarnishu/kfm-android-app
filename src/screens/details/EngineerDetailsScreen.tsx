@@ -10,9 +10,7 @@ const EngineerDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Details Screen</Text>
-      <Text>Item ID: {id}</Text>
-      <Button title="Go Back" onPress={() => navigation.goBack()} />
+      <Text> Available Soon</Text>
     </View>
   );
 };

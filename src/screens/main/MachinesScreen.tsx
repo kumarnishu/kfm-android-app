@@ -11,6 +11,7 @@ import { BackendError } from '../../..';
 import { GetAllMachines } from '../../services/MachineService';
 import { GetMachineDto } from '../../dto/MachineDto';
 import CreateOrEditMachineDialog from '../../components/dialogs/machines/CreateOrEditMachineDialog';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'MachinesScreen'>;
 
@@ -60,7 +61,7 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.textContainer}>
           <Title style={styles.title}>{item.name}</Title>
           <Paragraph style={styles.paragraph}>Model No : {item.model}</Paragraph>
-          <Button onPress={() => {
+          <Button mode='text'  rippleColor="transparent" onPress={() => {
             setMachine(item)
             setDialog('CreateOrEditMachineDialog')
           }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
@@ -95,10 +96,18 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
       {/* Title */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
         <Text style={styles.title}>Machines</Text>
-        {user?.role == "admin" && <Button onPress={() => {
+        {user?.role == "admin" && 
+         <MaterialIcons
+         name="add-circle"
+         size={40}
+         color="red"
+         onPress={() => {
           setMachine(undefined)
           setDialog('CreateOrEditMachineDialog')
-        }}>+New</Button>}
+         }}
+       />
+
+       }
       </View>
       <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 

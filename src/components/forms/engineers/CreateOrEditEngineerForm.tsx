@@ -1,84 +1,74 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Button, TextInput, HelperText, Text, Snackbar, Divider } from 'react-native-paper';
+import React, { useContext, useEffect } from 'react';
+import { Button, TextInput, HelperText, Snackbar, Divider, Text } from 'react-native-paper';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation } from 'react-query';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { AxiosResponse } from 'axios';
-import { ScrollView, View } from 'react-native';
 import { BackendError } from '../../../..';
 import { CreateOrEditEngineer } from '../../../services/EngineerServices';
 import { CreateOrEditUserDto, GetUserDto } from '../../../dto/UserDto';
 import { AlertContext } from '../../../contexts/AlertContext';
 
-
 function CreateOrEditEngineerForm({ customer, setDialog, staff }: { customer: string, staff?: GetUserDto, setDialog: React.Dispatch<React.SetStateAction<string | undefined>> }) {
     const { setAlert } = useContext(AlertContext);
-    const { mutate, isSuccess, isLoading } = useMutation<
+    const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+    const [snackbarMessage, setSnackbarMessage] = React.useState("");
+
+    const { mutate, isLoading } = useMutation<
         AxiosResponse<{ message: string }>,
         BackendError,
         { id?: string, body: CreateOrEditUserDto }
     >(CreateOrEditEngineer, {
-        onError: ((error) => {
-            error && setAlert({ message: error.response.data.message || "", color: 'error' })
-        })
+        onSuccess: () => {
+            setSnackbarMessage("Success!");
+            setSnackbarVisible(true);
+            setDialog(undefined);
+        },
+        onError: (error) => {
+            setSnackbarMessage(error?.response?.data?.message || "An error occurred.");
+            setSnackbarVisible(true);
+        },
     });
-
 
     const formik = useFormik({
         initialValues: {
             customer: customer,
-            email: staff ? staff.email : "",
-            mobile: staff ? staff.mobile : "",
-            username: staff ? staff.username : "",
-
+            email: staff?.email || "",
+            mobile: staff?.mobile || "",
+            username: staff?.username || "",
         },
         validationSchema: Yup.object({
             username: Yup.string().required('Required').min(4).max(100),
             customer: Yup.string().required('Required'),
             email: Yup.string().email('Invalid email'),
-            mobile: Yup.string().required('mobile is required').min(10, 'mobile must be 10 digits').max(10, 'mobile must be 10 digits').matches(/^[0-9]+$/, 'mobile must be a number'),
+            mobile: Yup.string()
+                .required('Mobile is required')
+                .matches(/^[0-9]{10}$/, 'Mobile must be a 10-digit number'),
         }),
         onSubmit: (values) => {
-            if (staff) {
-                mutate({ id: staff._id, body: values });
-            }
-            else {
-                mutate({ id: customer, body: values });
-            }
-
+            mutate(staff ? { id: staff._id, body: values } : { id: customer, body: values });
         },
     });
 
-    useEffect(() => {
-        if (isSuccess) {
-            setAlert({ message: `success`, color: 'success' })
-            setDialog(undefined)
-            setTimeout(() => {
-                {
-                    formik.resetForm()
-                }
-            }, 3000);
-        }
-
-    }, [isSuccess]);
-
-
     return (
         <>
-
-            <ScrollView>
-                <View style={{ flex: 1, justifyContent: 'center', padding: 10, gap: 2 }}>
-                    <Text style={{ fontSize: 30, textAlign: 'center', padding: 20, fontWeight: 'bold' }}>Engineer</Text>                    <TextInput
-                        label="Enter you name"
+            <ScrollView contentContainerStyle={styles.container}>
+                <View style={styles.formContainer}>
+                    <Text style={styles.headerText}>Engineer</Text>
+                    
+                    <TextInput
+                        label="Enter your name"
                         mode="outlined"
                         value={formik.values.username}
                         onChangeText={formik.handleChange('username')}
                         onBlur={formik.handleBlur('username')}
                         error={formik.touched.username && Boolean(formik.errors.username)}
+                        style={styles.input}
+                        accessibilityLabel="Name Input"
+                        placeholder="e.g., John Doe"
                     />
-                    {formik.touched.username && Boolean(formik.errors.username) && <HelperText type="error" >
-                        {formik.errors.username}
-                    </HelperText>}
+                    {formik.touched.username && formik.errors.username && <HelperText type="error">{formik.errors.username}</HelperText>}
 
                     <TextInput
                         label="Enter your email"
@@ -87,10 +77,11 @@ function CreateOrEditEngineerForm({ customer, setDialog, staff }: { customer: st
                         onChangeText={formik.handleChange('email')}
                         onBlur={formik.handleBlur('email')}
                         error={formik.touched.email && Boolean(formik.errors.email)}
+                        style={styles.input}
+                        accessibilityLabel="Email Input"
+                        placeholder="e.g., john.doe@example.com"
                     />
-                    {formik.touched.email && Boolean(formik.errors.email) && <HelperText type="error" >
-                        {formik.errors.email}
-                    </HelperText>}
+                    {formik.touched.email && formik.errors.email && <HelperText type="error">{formik.errors.email}</HelperText>}
 
                     <TextInput
                         label="Enter your mobile"
@@ -100,30 +91,77 @@ function CreateOrEditEngineerForm({ customer, setDialog, staff }: { customer: st
                         onChangeText={formik.handleChange('mobile')}
                         onBlur={formik.handleBlur('mobile')}
                         error={formik.touched.mobile && Boolean(formik.errors.mobile)}
+                        style={styles.input}
+                        accessibilityLabel="Mobile Input"
+                        placeholder="e.g., 1234567890"
                     />
-                    {formik.touched.mobile && Boolean(formik.errors.mobile) && <HelperText type="error" >
-                        {formik.errors.mobile}
-                    </HelperText>}
+                    {formik.touched.mobile && formik.errors.mobile && <HelperText type="error">{formik.errors.mobile}</HelperText>}
 
-
-                    <Divider style={{ marginVertical: 10 }} />
+                    <Divider style={styles.divider} />
                     <Button
                         mode="contained"
-                        buttonColor='red'
-                        style={{ padding: 5, borderRadius: 10 }}
-                        onPress={() => formik.handleSubmit()}
+                        onPress={()=>formik.handleSubmit()}
                         loading={isLoading}
                         disabled={isLoading}
+                        style={styles.submitButton}
+                        labelStyle={styles.submitButtonText}
                     >
                         Submit
                     </Button>
-
                 </View>
-            </ScrollView >
+            </ScrollView>
+
+            <Snackbar
+                visible={snackbarVisible}
+                onDismiss={() => setSnackbarVisible(false)}
+                action={{ label: 'OK', onPress: () => setSnackbarVisible(false) }}
+            >
+                {snackbarMessage}
+            </Snackbar>
         </>
     );
 }
 
-
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f9f9f9',
+    },
+    formContainer: {
+        flex:1,
+        backgroundColor: '#ffffff',
+        borderRadius: 10,
+        padding: 20,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    headerText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 20,
+    },
+    input: {
+        marginBottom: 15,
+        backgroundColor: '#ffffff',
+    },
+    divider: {
+        marginVertical: 10,
+        height: 1,
+        backgroundColor: '#ddd',
+    },
+    submitButton: {
+        backgroundColor: 'red',
+        borderRadius: 8,
+        paddingVertical: 10,
+    },
+    submitButtonText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+});
 
 export default CreateOrEditEngineerForm;

@@ -13,6 +13,7 @@ import { formatter } from '../../utils/formatter';
 import { GetSparePartDto } from '../../dto/SparePartDto';
 import CreateOrEditSpareDialog from '../../components/dialogs/spares/CreateOrEditSpareDialog';
 import EditSparePartsMachinesDialog from '../../components/dialogs/spares/EditSparePartsMachinesDialog';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'SparesScreen'>;
 
@@ -65,12 +66,12 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
         <Button onPress={() => {
           setSpare(item)
           setDialog('CreateOrEditSpareDialog')
-        }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
+        }} labelStyle={{ width: '100%', textAlign: 'right' }} mode='text'  rippleColor="transparent">Edit</Button>
         <Button onPress={() => {
           setSpare(item)
           setSelectedMachines(item.compatible_machines.map((i) => { return i.id }))
           setDialog('EditSparePartsMachinesDialog')
-        }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit Machines</Button>
+        }} labelStyle={{ width: '100%', textAlign: 'right' }} mode='text'  rippleColor="transparent">Edit Machines</Button>
 
       </Card.Content>
     </Card>
@@ -103,10 +104,17 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
       {/* Title */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
         <Text style={styles.title}>Spares</Text>
-        {user?.role == "admin" && <Button onPress={() => {
+        {user?.role == "admin" && 
+         <MaterialIcons
+         name="add-circle"
+         size={40}
+         color="red"
+         onPress={() => {
           setSpare(undefined)
           setDialog('CreateOrEditSpareDialog')
-        }}>+New</Button>}
+         }}
+       />
+}
       </View>
       <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
 

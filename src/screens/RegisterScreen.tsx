@@ -51,7 +51,7 @@ function RegisterScreen({ navigation }: Props) {
 
   useEffect(() => {
     if (isSuccess) {
-      setMessage(`${formik.values.name} ThankYou for joining With us !!`)
+      setAlert({ message: `${formik.values.name} ThankYou for joining With us !!`, color: 'error' })
       setTimeout(() => {
         {
           formik.resetForm()

@@ -30,7 +30,7 @@ const LoginScreen = ({ navigation }: Props) => {
     { mobile: string }
   >(SendOtp, {
     onError: ((error) => {
-      error && setMessage(error.response.data.message || "")
+      error && setAlert({ message: error.response.data.message || "", color: 'error' })
     })
   });
 
@@ -60,10 +60,10 @@ const LoginScreen = ({ navigation }: Props) => {
     if (isSuccess) {
       navigation.replace("OtpVerifyScreen", { mobile: formik.values.mobile })
       AsyncStorage.setItem('uname', formik.values.mobile);
-      setMessage(undefined)
+
     }
     if (error) {
-      setMessage(error?.response?.data?.message || 'Unknown error occurred');
+      setAlert({ message: error?.response?.data?.message || 'Unknown error occurred', color: 'error' });
     }
   }, [isSuccess, error]);
 
@@ -72,19 +72,19 @@ const LoginScreen = ({ navigation }: Props) => {
   }, [])
   return (
     <>
-     
-      <View style={{ flex: 1, padding: 20, flexDirection: 'column', gap: 15, justifyContent: 'center' }}>
-        <Image style={{ width: 300, height: 50, marginLeft: 30, marginBottom: 30 }} source={require('../assets/img/icon.png')} />
-        <Divider />
+
+      <View style={{ flex: 1, padding: 10, flexDirection: 'column', gap: 15, justifyContent: 'center' ,backgroundColor: 'white'}}>
+        <Image style={{ width: 200, height: 50,marginLeft:-15 }} source={require('../assets/img/icon.png')} />
         <TextInput
-          label="Enter your mobile"
+          label="Mobile"
+          autoFocus
           placeholder="Enter Registered Mobile"
           value={formik.values.mobile}
           onChangeText={formik.handleChange('mobile')}
           onBlur={formik.handleBlur('mobile')}
           keyboardType='numeric'
-          mode="outlined"
-          style={{ backgroundColor: 'white', paddingTop: 10, borderRadius: 10 }}
+          mode="flat"
+          style={{ backgroundColor: 'white', paddingVertical: 10,fontSize:20 }}
           error={formik.touched.mobile && !!formik.errors.mobile}
         />
         <Button
@@ -94,7 +94,7 @@ const LoginScreen = ({ navigation }: Props) => {
           buttonColor='red'
           style={{ padding: 5, borderRadius: 10 }}
         >
-          Submit
+          Sign In
         </Button>
 
 
@@ -104,7 +104,7 @@ const LoginScreen = ({ navigation }: Props) => {
           onPress={() => navigation.navigate("RegisterScreen")}
           labelStyle={{ textAlign: 'center', fontSize: 14, marginTop: 30 }}
         >
-          I donot have an Account ? Register
+          Register as  Customer .
         </Button>
       </View >
     </>

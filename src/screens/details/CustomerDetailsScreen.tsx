@@ -9,6 +9,7 @@ import FuzzySearch from 'fuzzy-search';
 import { Card, Avatar, Button, Text, TextInput } from 'react-native-paper';
 import { GetUserDto } from '../../dto/UserDto';
 import { GetAllCustomersStaffForAdmin } from '../../services/CustomerService';
+import { toTitleCase } from '../../utils/toTitleCase';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'CustomerDetailsScreen'>;
 
@@ -27,46 +28,25 @@ const CustomerDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     setRefreshing(false);
   };
 
-  useEffect(() => {
-    if (filter) {
-      const searcher = new FuzzySearch(customers, ['username', 'email', 'mobile'], {
-        caseSensitive: false,
-      });
-      const result = searcher.search(filter);
-      setCustomers(result)
-    }
-    if (!filter)
-      setCustomers(prefilteredCustomers)
-  }, [filter])
+
 
   useEffect(() => {
     if (isSuccess) {
       setCustomers(data.data)
-      setPrefilteredCustomers(data.data)
     }
   }, [isSuccess, data])
   // Render each customer as a card
-  const renderCustomer = ({ item }: { item: GetUserDto }) => (
 
-    <Card style={styles.card}>
-      <Card.Title
-        style={{ width: '100%' }}
-        title={`${item.username.toUpperCase()}-(${item.role.toUpperCase()})`}
-        subtitle={`Mob : ${item.mobile || "N/A"}`}
-        subtitleStyle={{ color: 'black', flexWrap: 'wrap' }}
-        left={(props) => (
-          <Avatar.Text
-            {...props}
-            label={item.username ? item.username.charAt(0).toUpperCase() : "C"}
-          />
-        )}
-      />
+  const renderCard = ({ item }: { item: GetUserDto }) => (
+    <Card style={styles.card} onPress={() => navigation.navigate('CustomerDetailsScreen', { id: item._id })}>
       <Card.Content>
-        <Text style={{ marginLeft: 56 }}>Company : {item.customer.label.toUpperCase() || ''}</Text>
-        <Text style={{ marginLeft: 56 }}>Email : {item.email || ''}</Text>
+        <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{`${item.username.toUpperCase()}-(${item.role.toUpperCase()})`}</Text>
+        <Text>{`${toTitleCase(item.customer.label || "Not available")}`}</Text>
+        <Text style={{ color: 'grey' }} >Mobile : {item.mobile || "Not available"}</Text>
       </Card.Content>
     </Card>
   );
+
 
   // Handle loading and error states
   if (isLoading) {
@@ -94,14 +74,14 @@ const CustomerDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       {/* Title */}
 
       <Text style={styles.title}>Members</Text>
-      <TextInput style={{ marginBottom: 10 }} placeholder='Members' mode='outlined' onChangeText={(val) => setFilter(val)} />
+
 
 
       {/* Customer List */}
       <FlatList
         data={customers}
         keyExtractor={(item) => item._id.toString()}
-        renderItem={renderCustomer}
+        renderItem={renderCard}
         refreshing={refreshing} // Indicates if the list is refreshing
         onRefresh={onRefresh} // Handler for pull-to-refresh
         ListEmptyComponent={
@@ -124,7 +104,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 16, textAlign: 'center'
   },
   card: {
     marginBottom: 16,

@@ -26,7 +26,7 @@ const OtpVerifyScreen = ({ route }: Props) => {
         { mobile: string, otp: number }
     >(CheckOtpAndLogin, {
         onError: ((error) => {
-            error && setMessage(error.response.data.message || "")
+            error && setAlert({ message: error.response.data.message || "", color: 'error' })
         })
     });
     const { mutate: resendOtp, isSuccess: isotpSuccss } = useMutation<
@@ -35,7 +35,7 @@ const OtpVerifyScreen = ({ route }: Props) => {
         { mobile: string }
     >(SendOtp, {
         onError: ((error) => {
-            error && setMessage(error.response.data.message || "")
+            error && setAlert({ message: error.response.data.message || "", color: 'error' })
         })
     });
 
@@ -55,36 +55,36 @@ const OtpVerifyScreen = ({ route }: Props) => {
 
     useEffect(() => {
         if (isotpSuccss) {
-            setMessage('Otp sent successfully')
+            setAlert({ message: 'Otp sent successfully', color: 'success' })
         }
         if (error) {
-            setMessage(error?.response?.data?.message || 'Unknown error occurred');
+            setAlert({ message: error?.response?.data?.message || 'Unknown error occurred', color: 'error' });
         }
     }, [isSuccess, error]);
 
     useEffect(() => {
         setIsLoading(false)
     }, [timeoutError])
-    
+
     useEffect(() => {
         if (isSuccess && data) {
             setIsLoading(false)
             setUser(data.data.user)
-            setMessage(undefined)
             stopListener()
-        }
+            }
         if (error) {
-            setIsLoading(false)
-            setMessage(error?.response?.data?.message || 'Unknown error occurred');
-        }
+                setIsLoading(false)
+                setAlert({
+                    message: error?.response?.data?.message || 'Unknown error occurred',color:'error'});
+                }
     }, [isSuccess, error]);
     return (
         <>
-           
+
             <View style={{ flex: 1, padding: 20, flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
-                {timeoutError && <Text style={{ color: 'red' }}>Otp Timedout !! Retry</Text>} 
-                 <ActivityIndicator size={'large'} style={{ margin: 10 }} color='red' />
-                 <Button
+                {timeoutError && <Text style={{ color: 'red' }}>Otp Timedout !! Retry</Text>}
+                <ActivityIndicator size={'large'} style={{ margin: 10 }} color='red' />
+                <Button
                     mode="text"
                     disabled={isLoading}
                     onPress={() => mobile && resendOtp({ mobile: mobile })}
