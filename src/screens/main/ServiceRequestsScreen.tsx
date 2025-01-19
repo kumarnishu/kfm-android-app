@@ -58,16 +58,13 @@ const ServiceRequestsScreen: React.FC<Props> = ({ navigation }) => {
       request && navigation.navigate('ServiceRequestDetailsScreen', { id: request._id })
     }}>
       <Card.Content style={styles.cardContent}>
-
         <View style={styles.textContainer}>
-          <Title style={styles.title}>{item.request_id}</Title>
-          <Paragraph style={styles.paragraph}>{item.product.label}</Paragraph>
-          <Paragraph style={styles.paragraph}>{`Approved on : ${moment(item.approved_on).format("DD-MM-YYYY")}`}</Paragraph>
-
+          <Text style={[styles.title, { paddingLeft: 0 }]}>{item.customer.label}</Text>
+          <Text style={styles.subtitle}>ID : {item.request_id}</Text>
+          {item.assigned_engineer && <Paragraph style={[styles.paragraph, { color: 'green' }]}>{item.assigned_engineer.label}</Paragraph>}
+          <Text style={[styles.subtitle, { fontSize: 12 }, { color: item.assigned_engineer ? 'green' : 'red' }]}>{item.assigned_engineer ? `Approved on : ${moment(item.approved_on).format("DD-MM-YYYY")}` : 'Pending for approval'}</Text>
         </View>
-
       </Card.Content>
-
     </Card>
   );
 
@@ -98,9 +95,8 @@ const ServiceRequestsScreen: React.FC<Props> = ({ navigation }) => {
 
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
         <Text style={styles.title}>Service Requests</Text>
-
       </View>
-      <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
+      <TextInput mode="flat" placeholder='Search' style={{ backgroundColor: 'white', marginBottom: 10 }} onChangeText={(val) => setFilter(val)} />
 
 
       {/* Engineer List */}
@@ -125,52 +121,64 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#f9f9f9',
   },
+  card: {
+    marginBottom: 16,
+    backgroundColor: 'white',
+    borderRadius: 12, // Rounded corners
+    elevation: 4, // Android shadow
+    shadowColor: '#000', // iOS shadow
+    shadowOffset: { width: 0, height: 2 }, // iOS shadow offset
+    shadowOpacity: 0.2, // iOS shadow opacity
+    shadowRadius: 4, // iOS shadow radius
+    overflow: 'hidden', // Prevent content from overflowing rounded corners
+  },
   cardContent: {
     flexDirection: 'row',
     padding: 16, // Add padding inside the card
   },
   image: {
     width: 150,
-    height: 150,
-    borderColor: 'red',
+    height: 200,
+    borderRadius: 8, // Rounded image corners
+    borderColor: '#ddd', // Light border
     borderWidth: 1,
     marginRight: 15,
   },
   textContainer: {
     flex: 1,
-    paddingLeft: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 16,
-    textTransform: 'capitalize'
+    color: '#333',
+    paddingLeft: 10,
+    marginBottom: 8,
   },
-  card: {
-    marginBottom: 16,
-    backgroundColor: 'white',
-    elevation: 2,
-    borderRadius: 8,
+  subtitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  paragraph: {
+    fontSize: 16,
+    color: '#666',
+    textTransform: 'capitalize',
+  },
+  button: {
+    alignSelf: 'flex-end',
+    marginTop: 8,
   },
   loader: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-
-  paragraph: {
-    paddingLeft: 2,
-    textTransform: 'capitalize',
-    color: 'black'
-  },
   emptyText: {
     textAlign: 'center',
     marginTop: 20,
     fontSize: 16,
     color: '#888',
-  },
-  toggleButton: {
-    marginTop: 16,
   },
 });
 export default ServiceRequestsScreen;

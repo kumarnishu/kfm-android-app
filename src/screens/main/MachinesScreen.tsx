@@ -61,10 +61,10 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.textContainer}>
           <Title style={[styles.title, { paddingLeft: 0 }]}>Name : {item.name}</Title>
           <Paragraph style={styles.paragraph}>Model No : {item.model}</Paragraph>
-          <Button mode='text' rippleColor="transparent" onPress={() => {
+          {user?.role == "admin" && <Button mode='text' rippleColor="transparent" onPress={() => {
             setMachine(item)
             setDialog('CreateOrEditMachineDialog')
-          }} labelStyle={{ width: '100%', textAlign: 'left' }}>Edit Item</Button>
+          }} labelStyle={{ width: '100%', textAlign: 'left' }}>Edit Item</Button>}
         </View>
       </Card.Content>
     </Card>

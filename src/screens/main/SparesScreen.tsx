@@ -65,10 +65,10 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
 
           <Text style={styles.paragraph}>PART NO : {item.partno}</Text>
           <Text style={styles.paragraph}>Est. Price : {item.price} rs.</Text>
-          <Button mode='text' rippleColor="transparent" onPress={() => {
+          {user?.role == "admin" &&<Button mode='text' rippleColor="transparent" onPress={() => {
             setSpare(item)
             setDialog('CreateOrEditSpareDialog')
-          }} labelStyle={{ width: '100%', textAlign: 'left' }}>Edit item</Button>
+          }} labelStyle={{ width: '100%', textAlign: 'left' }}>Edit item</Button>}
         </View>
       </Card.Content>
     </Card>

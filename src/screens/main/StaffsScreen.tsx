@@ -72,10 +72,10 @@ const StaffsScreen: React.FC<Props> = ({ navigation }) => {
       <Card.Content>
         <Text style={{ marginLeft: 56 }}>Company : {item.customer.label.toUpperCase() || ''}</Text>
         <Text style={{ marginLeft: 56 }}>Email : {item.email || ''}</Text>
-        <Button onPress={() => {
+        {user?.role == "owner" &&<Button onPress={() => {
           setEngineer(item)
           setDialog('CreateOrEditStaffDialog')
-        }} labelStyle={{ width: '100%', textAlign: 'right' }} mode='text'  rippleColor="transparent">Edit Engineer</Button>
+        }} labelStyle={{ width: '100%', textAlign: 'right' }} mode='text'  rippleColor="transparent">Edit Engineer</Button>}
       </Card.Content>
     </Card>
   );

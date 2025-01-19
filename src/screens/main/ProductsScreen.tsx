@@ -69,10 +69,10 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
           <Paragraph style={[styles.subtitle, { paddingLeft: 0 }]}>{item.customer.label}</Paragraph>
           <Paragraph style={styles.paragraph}>{item.installationDate ? `Installation Date : ${moment(item.installationDate).format("DD-MM-YYYY")}` : 'Not Installed'}</Paragraph>
           <Paragraph style={styles.paragraph}>{item.warrantyUpto ? `Warranty upto : ${moment(item.warrantyUpto).format("DD-MM-YYYY")}` : 'Not Applicable'}</Paragraph>
-          <Button mode='text' rippleColor="transparent" onPress={() => {
+          {user?.role == "admin" &&<Button mode='text' rippleColor="transparent" onPress={() => {
             setProduct(item)
             setDialog('CreateOrEditRegisteredProductDialog')
-          }} labelStyle={{ width: '100%', textAlign: 'left' }}>Edit item</Button>
+          }} labelStyle={{ width: '100%', textAlign: 'left' }}>Edit item</Button>}
         </View>
 
       </Card.Content>
