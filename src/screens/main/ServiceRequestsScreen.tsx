@@ -51,7 +51,7 @@ const ServiceRequestsScreen: React.FC<Props> = ({ navigation }) => {
     }
   }, [isSuccess, data])
   // Render each engineer as a card
-  const renderEngineer = ({ item }: { item: GetServiceRequestDto }) => (
+  const renderCard = ({ item }: { item: GetServiceRequestDto }) => (
 
     <Card style={styles.card} onPress={() => {
       setRequest(item)
@@ -106,8 +106,8 @@ const ServiceRequestsScreen: React.FC<Props> = ({ navigation }) => {
       {/* Engineer List */}
       {requests && <FlatList
         data={requests}
-        keyExtractor={(item) => item._id.toString()}
-        renderItem={renderEngineer}
+        keyExtractor={(item) => item._id}
+        renderItem={renderCard}
         refreshing={refreshing} // Indicates if the list is refreshing
         onRefresh={onRefresh} // Handler for pull-to-refresh
         ListEmptyComponent={
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flexDirection: 'row',
-    alignItems: 'center',
+    padding: 16, // Add padding inside the card
   },
   image: {
     width: 150,

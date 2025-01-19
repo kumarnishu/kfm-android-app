@@ -1,10 +1,20 @@
 import React from 'react';
 import AppNavigator from './navigation/AppNavigator';
-import { PaperProvider } from 'react-native-paper';
 import { UserProvider } from './contexts/UserContext';
 import { AlertProvider } from './contexts/AlertContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+import { MD3LightTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
+
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: 'tomato',
+    secondary: 'yellow',
+  },
+};
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,7 +33,7 @@ const App: React.FC = () => {
     <QueryClientProvider client={queryClient}>
       <UserProvider>
         <SafeAreaProvider>
-          <PaperProvider>
+          <PaperProvider theme={theme}>
             <AlertProvider>
               <AppNavigator />
             </AlertProvider>

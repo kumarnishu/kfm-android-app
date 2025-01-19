@@ -53,18 +53,18 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
     }
   }, [isSuccess, data])
   // Render each engineer as a card
-  const renderEngineer = ({ item }: { item: GetMachineDto }) => (
+  const renderCard = ({ item }: { item: GetMachineDto }) => (
 
     <Card style={styles.card}>
       <Card.Content style={styles.cardContent}>
         <Image style={styles.image} source={item.photo !== "" ? { uri: item.photo } : require("../../assets/img/placeholder.png")} />
         <View style={styles.textContainer}>
-          <Title style={styles.title}>{item.name}</Title>
+          <Title style={[styles.title, { paddingLeft: 0 }]}>Name : {item.name}</Title>
           <Paragraph style={styles.paragraph}>Model No : {item.model}</Paragraph>
           <Button mode='text' rippleColor="transparent" onPress={() => {
             setMachine(item)
             setDialog('CreateOrEditMachineDialog')
-          }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
+          }} labelStyle={{ width: '100%', textAlign: 'left' }}>Edit Item</Button>
         </View>
       </Card.Content>
     </Card>
@@ -95,7 +95,7 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
     <View style={styles.container}>
       {/* Title */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
-         <Text style={{ fontSize: 20, fontWeight: 'bold',paddingBottom:20 }}>Machines</Text>
+        <Text style={{ fontSize: 20, fontWeight: 'bold', paddingBottom: 20 }}>Machines</Text>
         {user?.role == "admin" &&
           <MaterialIcons
             name="add-circle"
@@ -115,8 +115,8 @@ const MachinesScreen: React.FC<Props> = ({ navigation }) => {
       {/* Engineer List */}
       {machines && <FlatList
         data={machines}
-        keyExtractor={(item) => item._id.toString()}
-        renderItem={renderEngineer}
+        keyExtractor={(item) => item._id}
+        renderItem={renderCard}
         refreshing={refreshing} // Indicates if the list is refreshing
         onRefresh={onRefresh} // Handler for pull-to-refresh
         ListEmptyComponent={
@@ -148,12 +148,11 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flexDirection: 'row',
-    alignItems: 'center',
     padding: 16, // Add padding inside the card
   },
   image: {
-    width: 120,
-    height: 120,
+    width: 150,
+    height: 200,
     borderRadius: 8, // Rounded image corners
     borderColor: '#ddd', // Light border
     borderWidth: 1,
@@ -164,9 +163,17 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   title: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 22,
+    fontWeight: 'bold',
     color: '#333',
+    paddingLeft: 10,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    paddingLeft: 10,
     marginBottom: 8,
   },
   paragraph: {

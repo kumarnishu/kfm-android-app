@@ -55,10 +55,10 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
     }
   }, [isSuccess, data])
   // Render each engineer as a card
-  const renderEngineer = ({ item }: { item: GetSparePartDto }) => (
+  const renderCard = ({ item }: { item: GetSparePartDto }) => (
 
     <Card style={styles.card}>
-      <Title style={styles.title}>{toTitleCase(item.name || "")}</Title>
+      <Title style={[styles.title, { fontSize: 18 }]}>Name : {toTitleCase(item.name || "")}</Title>
       <Card.Content style={styles.cardContent}>
         <Image style={styles.image} source={item.photo !== "" ? { uri: item.photo } : require("../../assets/img/placeholder.png")} />
         <View style={styles.textContainer}>
@@ -68,7 +68,7 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
           <Button mode='text' rippleColor="transparent" onPress={() => {
             setSpare(item)
             setDialog('CreateOrEditSpareDialog')
-          }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
+          }} labelStyle={{ width: '100%', textAlign: 'left' }}>Edit item</Button>
         </View>
       </Card.Content>
     </Card>
@@ -100,7 +100,7 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
 
       {/* Title */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
-        <Text style={{ fontSize: 20, fontWeight: 'bold',paddingBottom:20 }}>Spares</Text>
+        <Text style={{ fontSize: 24, fontWeight: 'bold', paddingBottom: 20 }}>Spares</Text>
         {user?.role == "admin" &&
           <MaterialIcons
             name="add-circle"
@@ -113,14 +113,14 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
           />
         }
       </View>
-       <TextInput mode="flat" placeholder='Search' style={{ backgroundColor: 'white', marginBottom: 10 }} onChangeText={(val) => setFilter(val)} />
+      <TextInput mode="flat" placeholder='Search' style={{ backgroundColor: 'white', marginBottom: 10 }} onChangeText={(val) => setFilter(val)} />
 
 
       {/* Engineer List */}
       {spares && <FlatList
         data={spares}
-        keyExtractor={(item) => item._id.toString()}
-        renderItem={renderEngineer}
+        keyExtractor={(item) => item._id}
+        renderItem={renderCard}
         refreshing={refreshing} // Indicates if the list is refreshing
         onRefresh={onRefresh} // Handler for pull-to-refresh
         ListEmptyComponent={
@@ -132,7 +132,6 @@ const SparesScreen: React.FC<Props> = ({ navigation }) => {
     </Surface>
   );
 };
-
 
 
 const styles = StyleSheet.create({
@@ -154,12 +153,11 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flexDirection: 'row',
-    alignItems: 'center',
     padding: 16, // Add padding inside the card
   },
   image: {
-    width: 120,
-    height: 120,
+    width: 150,
+    height: 200,
     borderRadius: 8, // Rounded image corners
     borderColor: '#ddd', // Light border
     borderWidth: 1,
@@ -170,15 +168,23 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   title: {
-    fontSize: 20,
-    marginLeft: 16,
-    fontWeight: '400',
+    fontSize: 22,
+    fontWeight: 'bold',
+    paddingLeft: 10,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
     color: '#333',
+    paddingLeft: 10,
     marginBottom: 8,
   },
   paragraph: {
     fontSize: 16,
+    color: '#666',
     marginBottom: 10,
+    textTransform: 'capitalize',
   },
   button: {
     alignSelf: 'flex-end',
@@ -196,6 +202,5 @@ const styles = StyleSheet.create({
     color: '#888',
   },
 });
-
 
 export default SparesScreen;

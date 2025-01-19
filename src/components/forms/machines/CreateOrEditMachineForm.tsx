@@ -10,7 +10,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation } from 'react-query';
 import { AxiosResponse } from 'axios';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Asset, } from 'react-native-image-picker';
 import { BackendError } from '../../../..';
 import { AlertContext } from '../../../contexts/AlertContext';
@@ -37,7 +37,7 @@ function CreateOrEditMachineForm({
         { id?: string; body: FormData }
     >(CreateOrEditMachine, {
         onSuccess: () => {
-            queryClient.invalidateQueries('spares')
+            queryClient.invalidateQueries('machines')
         },
         onError: (error) => {
             error && setAlert({ message: error.response.data.message || '', color: 'error' });
@@ -113,7 +113,7 @@ function CreateOrEditMachineForm({
         <>
 
             <ScrollView>
-                <View style={{ flex: 1, justifyContent: 'center', padding: 10, gap: 2 }}>
+                <View style={{ flex: 1, justifyContent: 'center', padding: 10, gap: 10 }}>
                     <Text
                         style={{
                             fontSize: 30,
@@ -126,7 +126,8 @@ function CreateOrEditMachineForm({
                     </Text>
                     <TextInput
                         label="Enter Model "
-                        mode="outlined"
+                        mode="flat"
+                        style={styles.input}
                         value={formik.values.model}
                         onChangeText={formik.handleChange('model')}
                         onBlur={formik.handleBlur('model')}
@@ -137,7 +138,8 @@ function CreateOrEditMachineForm({
                     )}
                     <TextInput
                         label="Enter Name"
-                        mode="outlined"
+                        mode="flat"
+                        style={styles.input}
                         value={formik.values.name}
                         onChangeText={formik.handleChange('name')}
                         onBlur={formik.handleBlur('name')}
@@ -147,23 +149,69 @@ function CreateOrEditMachineForm({
                         <HelperText type="error">{formik.errors.name}</HelperText>
                     )}
 
-                    <Divider style={{ marginVertical: 10 }} />
+                    <SelectPhotoComponent photo={machine?.photo} file={file} setFile={setFile} />
+                    <Button
+                        mode="contained"
+                        buttonColor="red"
+                        style={{ padding: 5, borderRadius: 10 }}
+                        onPress={() => formik.handleSubmit()}
+                        loading={isLoading}
+                        disabled={isLoading || !validated}
+                    >
+                        Submit
+                    </Button>
                 </View>
 
-                <SelectPhotoComponent photo={machine?.photo} file={file} setFile={setFile} />
-                <Button
-                    mode="contained"
-                    buttonColor="red"
-                    style={{ padding: 5, borderRadius: 10 }}
-                    onPress={() => formik.handleSubmit()}
-                    loading={isLoading}
-                    disabled={isLoading || !validated}
-                >
-                    Submit
-                </Button>
             </ScrollView>
         </>
     );
 }
+
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: '#f9f9f9',
+    },
+    formContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: '#ffffff',
+        borderRadius: 10,
+        padding: 20,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    headerText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 20,
+    },
+    input: {
+        marginBottom: 15,
+        paddingVertical:10,
+        fontSize:18,
+        backgroundColor: 'white',
+    },
+    divider: {
+        marginVertical: 10,
+        height: 1,
+        backgroundColor: '#ddd',
+    },
+    submitButton: {
+        backgroundColor: 'red',
+        borderRadius: 8,
+        paddingVertical: 10,
+    },
+    submitButtonText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+});
 
 export default CreateOrEditMachineForm;

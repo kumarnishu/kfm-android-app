@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import {
-  NavigationContainer,
+  NavigationContainer,  createNavigationContainerRef,
 } from '@react-navigation/native';
 import { UserContext } from '../contexts/UserContext';
 import HomeScreen from '../screens/HomeScreen';
@@ -26,6 +26,16 @@ import StaffDetailsScreen from '../screens/details/StaffDetailsScreen';
 import StaffsScreen from '../screens/main/StaffsScreen';
 import { AlertContext } from '../contexts/AlertContext';
 import AlertComponent from '../components/AlertComponent';
+
+
+export const navigationRef = createNavigationContainerRef();
+
+export const navigate = (name: string, params?: object) => {
+  if (navigationRef.isReady()) {
+    //@ts-ignore
+    navigationRef.navigate(name, params);
+  }
+};
 
 export type AuthenticatedStackParamList = {
   HomeScreen: undefined;
@@ -96,8 +106,7 @@ const AppNavigator = () => {
     )
 
   return (
-    <NavigationContainer>
-
+    <NavigationContainer ref={navigationRef}>
       {user ?
         <AuthenticatedNavigator />
         : <PublicNavigator />}

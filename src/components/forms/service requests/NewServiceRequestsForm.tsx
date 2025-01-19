@@ -9,7 +9,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation } from 'react-query';
 import { AxiosResponse } from 'axios';
-import { ScrollView, View, Image } from 'react-native';
+import { ScrollView, View, Image, StyleSheet } from 'react-native';
 import { BackendError } from '../../../..';
 import { AlertContext } from '../../../contexts/AlertContext';
 import { Asset } from 'react-native-image-picker';
@@ -51,9 +51,9 @@ function NewServiceRequestsForm({
             let formData = new FormData();
             if (files && files.length > 0) {
                 files.forEach((file) => formData.append('files', {
-                    uri:file.asset?.uri,
-                    type:file.asset?.type,
-                    name:file.asset?.fileName,
+                    uri: file.asset?.uri,
+                    type: file.asset?.type,
+                    name: file.asset?.fileName,
                 }));
             }
             let data = {
@@ -93,13 +93,17 @@ function NewServiceRequestsForm({
                         Service Request
                     </Text>
                     <TextInput
-                        label="Enter Problem"
-                        mode="outlined"
+                        label="Describe Problem"
+                        mode="flat"
+                        multiline
+                        numberOfLines={4}
                         value={formik.values.problem}
                         onChangeText={formik.handleChange('problem')}
                         onBlur={formik.handleBlur('problem')}
-                        error={formik.touched.problem && Boolean(formik.errors.problem)}
+                        error={formik.touched.problem && !!formik.errors.problem}
+                        style={[styles.input, styles.textArea]}
                     />
+
                     {formik.touched.problem && Boolean(formik.errors.problem) && (
                         <HelperText type="error">{formik.errors.problem}</HelperText>
                     )}
@@ -119,5 +123,43 @@ function NewServiceRequestsForm({
         </>
     );
 }
+
+
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 10,
+        backgroundColor: '#f9f9f9',
+    },
+    headerText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 20,
+        color: '#333',
+    },
+    input: {
+        backgroundColor: 'white',
+        paddingVertical: 10,
+        fontSize: 18
+    },
+    textArea: {
+        height: 120,
+    },
+    divider: {
+        marginVertical: 20,
+        backgroundColor: '#ddd',
+    },
+    button: {
+        marginTop: 10,
+        paddingVertical: 10,
+        borderRadius: 8,
+    },
+    snackbar: {
+        backgroundColor: '#323232',
+    },
+});
+
 
 export default NewServiceRequestsForm;

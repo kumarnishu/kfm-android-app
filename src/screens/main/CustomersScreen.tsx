@@ -106,7 +106,7 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
 
         {customers && <FlatList
           data={customers}
-          keyExtractor={(item) => item._id.toString()}
+          keyExtractor={(item) => item._id}
           renderItem={renderCard}
           refreshing={refreshing} // Indicates if the list is refreshing
           onRefresh={onRefresh} // Handler for pull-to-refresh

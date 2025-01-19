@@ -9,6 +9,7 @@ import { BackendError } from '../../../..';
 import { CreateOrEditEngineer } from '../../../services/EngineerServices';
 import { CreateOrEditUserDto, GetUserDto } from '../../../dto/UserDto';
 import { AlertContext } from '../../../contexts/AlertContext';
+import { queryClient } from '../../../App';
 
 function CreateOrEditEngineerForm({ customer, setDialog, staff }: { customer: string, staff?: GetUserDto, setDialog: React.Dispatch<React.SetStateAction<string | undefined>> }) {
     const { setAlert } = useContext(AlertContext);
@@ -24,11 +25,13 @@ function CreateOrEditEngineerForm({ customer, setDialog, staff }: { customer: st
             setSnackbarMessage("Success!");
             setSnackbarVisible(true);
             setDialog(undefined);
+            queryClient.invalidateQueries('engineers')
         },
         onError: (error) => {
             setSnackbarMessage(error?.response?.data?.message || "An error occurred.");
             setSnackbarVisible(true);
         },
+
     });
 
     const formik = useFormik({
@@ -47,7 +50,10 @@ function CreateOrEditEngineerForm({ customer, setDialog, staff }: { customer: st
                 .matches(/^[0-9]{10}$/, 'Mobile must be a 10-digit number'),
         }),
         onSubmit: (values) => {
-            mutate(staff ? { id: staff._id, body: values } : { id: customer, body: values });
+            if (staff)
+                mutate({ id: staff._id, body: values });
+            else
+                mutate({ body: values });
         },
     });
 
@@ -55,11 +61,11 @@ function CreateOrEditEngineerForm({ customer, setDialog, staff }: { customer: st
         <>
             <ScrollView contentContainerStyle={styles.container}>
                 <View style={styles.formContainer}>
-                    <Text style={styles.headerText}>Engineer</Text>
-                    
+                    <Text style={styles.headerText}>{staff ? "Create Engineer" : "New Engineer"}</Text>
+
                     <TextInput
                         label="Enter your name"
-                        mode="outlined"
+                        mode="flat"
                         value={formik.values.username}
                         onChangeText={formik.handleChange('username')}
                         onBlur={formik.handleBlur('username')}
@@ -72,7 +78,7 @@ function CreateOrEditEngineerForm({ customer, setDialog, staff }: { customer: st
 
                     <TextInput
                         label="Enter your email"
-                        mode="outlined"
+                        mode="flat"
                         value={formik.values.email}
                         onChangeText={formik.handleChange('email')}
                         onBlur={formik.handleBlur('email')}
@@ -85,7 +91,7 @@ function CreateOrEditEngineerForm({ customer, setDialog, staff }: { customer: st
 
                     <TextInput
                         label="Enter your mobile"
-                        mode="outlined"
+                        mode="flat"
                         keyboardType="number-pad"
                         value={formik.values.mobile}
                         onChangeText={formik.handleChange('mobile')}
@@ -97,10 +103,9 @@ function CreateOrEditEngineerForm({ customer, setDialog, staff }: { customer: st
                     />
                     {formik.touched.mobile && formik.errors.mobile && <HelperText type="error">{formik.errors.mobile}</HelperText>}
 
-                    <Divider style={styles.divider} />
                     <Button
                         mode="contained"
-                        onPress={()=>formik.handleSubmit()}
+                        onPress={() => formik.handleSubmit()}
                         loading={isLoading}
                         disabled={isLoading}
                         style={styles.submitButton}
@@ -125,10 +130,12 @@ function CreateOrEditEngineerForm({ customer, setDialog, staff }: { customer: st
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        justifyContent: 'center',
         backgroundColor: '#f9f9f9',
     },
     formContainer: {
-        flex:1,
+        flex: 1,
+        justifyContent: 'center',
         backgroundColor: '#ffffff',
         borderRadius: 10,
         padding: 20,
@@ -146,7 +153,9 @@ const styles = StyleSheet.create({
     },
     input: {
         marginBottom: 15,
-        backgroundColor: '#ffffff',
+        paddingVertical:10,
+        fontSize:18,
+        backgroundColor: 'white',
     },
     divider: {
         marginVertical: 10,

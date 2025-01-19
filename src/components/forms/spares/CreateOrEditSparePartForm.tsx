@@ -10,7 +10,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation } from 'react-query';
 import { AxiosResponse } from 'axios';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Asset, } from 'react-native-image-picker';
 import { BackendError } from '../../../..';
 import { GetSparePartDto } from '../../../dto/SparePartDto';
@@ -128,7 +128,8 @@ function CreateOrEditSparePartForm({
           </Text>
           <TextInput
             label="Enter Partno"
-            mode="outlined"
+            mode="flat"
+            style={styles.input}
             value={formik.values.partno}
             onChangeText={formik.handleChange('partno')}
             onBlur={formik.handleBlur('partno')}
@@ -139,7 +140,8 @@ function CreateOrEditSparePartForm({
           )}
           <TextInput
             label="Enter Part Name"
-            mode="outlined"
+            mode="flat"
+            style={styles.input}
             value={formik.values.name}
             onChangeText={formik.handleChange('name')}
             onBlur={formik.handleBlur('name')}
@@ -150,7 +152,8 @@ function CreateOrEditSparePartForm({
           )}
           <TextInput
             label="Enter Price"
-            mode="outlined"
+            mode="flat"
+            style={styles.input}
             keyboardType="number-pad"
             value={String(formik.values.price)}
             onChangeText={formik.handleChange('price')}
@@ -160,23 +163,69 @@ function CreateOrEditSparePartForm({
           {formik.touched.price && Boolean(formik.errors.price) && (
             <HelperText type="error">{formik.errors.price}</HelperText>
           )}
-          <Divider style={{ marginVertical: 10 }} />
+          <SelectPhotoComponent photo={part?.photo} file={file} setFile={setFile} />
+          <Button
+            mode="contained"
+            buttonColor="red"
+            style={{ padding: 5, borderRadius: 10 }}
+            onPress={() => formik.handleSubmit()}
+            loading={isLoading}
+            disabled={isLoading || !validated}
+          >
+            Submit
+          </Button>
         </View>
 
-        <SelectPhotoComponent photo={part?.photo} file={file} setFile={setFile} />
-        <Button
-          mode="contained"
-          buttonColor="red"
-          style={{ padding: 5, borderRadius: 10 }}
-          onPress={() => formik.handleSubmit()}
-          loading={isLoading}
-          disabled={isLoading || !validated}
-        >
-          Submit
-        </Button>
       </ScrollView>
     </>
   );
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#f9f9f9',
+  },
+  formContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  input: {
+    marginBottom: 15,
+    paddingVertical: 10,
+    fontSize: 18,
+    backgroundColor: 'white',
+  },
+  divider: {
+    marginVertical: 10,
+    height: 1,
+    backgroundColor: '#ddd',
+  },
+  submitButton: {
+    backgroundColor: 'red',
+    borderRadius: 8,
+    paddingVertical: 10,
+  },
+  submitButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
 
 export default CreateOrEditSparePartForm;

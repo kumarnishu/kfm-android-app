@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation } from 'react-query';
 import { AxiosResponse } from 'axios';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { BackendError } from '../../../..';
 import { CreateOrEditUserDto, GetUserDto } from '../../../dto/UserDto';
 import { CreateOrEditStaff } from '../../../services/CustomerService';
@@ -69,7 +69,8 @@ function CreateOrEditStaffForm({ customer, staff, setDialog }: { customer: strin
                     <Text style={{ fontSize: 30, textAlign: 'center', padding: 20, fontWeight: 'bold' }}>Staff</Text>
                     <TextInput
                         label="Enter you name"
-                        mode="outlined"
+                        mode="flat"
+                        style={styles.input}
                         value={formik.values.username}
                         onChangeText={formik.handleChange('username')}
                         onBlur={formik.handleBlur('username')}
@@ -81,7 +82,8 @@ function CreateOrEditStaffForm({ customer, staff, setDialog }: { customer: strin
 
                     <TextInput
                         label="Enter your email"
-                        mode="outlined"
+                        mode="flat"
+                        style={styles.input}
                         value={formik.values.email}
                         onChangeText={formik.handleChange('email')}
                         onBlur={formik.handleBlur('email')}
@@ -93,7 +95,8 @@ function CreateOrEditStaffForm({ customer, staff, setDialog }: { customer: strin
 
                     <TextInput
                         label="Enter your mobile"
-                        mode="outlined"
+                        mode="flat"
+                        style={styles.input}
                         keyboardType="number-pad"
                         value={formik.values.mobile}
                         onChangeText={formik.handleChange('mobile')}
@@ -122,6 +125,42 @@ function CreateOrEditStaffForm({ customer, staff, setDialog }: { customer: strin
         </>
     );
 }
+
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 10,
+        backgroundColor: '#f9f9f9',
+    },
+    headerText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 20,
+        color: '#333',
+    },
+    input: {
+        backgroundColor: 'white',
+        paddingVertical: 10,
+        fontSize: 18
+    },
+    textArea: {
+        height: 120,
+    },
+    divider: {
+        marginVertical: 20,
+        backgroundColor: '#ddd',
+    },
+    button: {
+        marginTop: 10,
+        paddingVertical: 10,
+        borderRadius: 8,
+    },
+    snackbar: {
+        backgroundColor: '#323232',
+    },
+});
 
 
 

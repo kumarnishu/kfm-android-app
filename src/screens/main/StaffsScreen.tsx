@@ -54,7 +54,7 @@ const StaffsScreen: React.FC<Props> = ({ navigation }) => {
     }
   }, [isSuccess, data])
   // Render each engineer as a card
-  const renderEngineer = ({ item }: { item: GetUserDto }) => (
+  const renderCard = ({ item }: { item: GetUserDto }) => (
 
     <Card style={styles.card} onPress={() => navigation.navigate('StaffDetailsScreen', { id: item._id })}>
       <Card.Title
@@ -125,8 +125,8 @@ const StaffsScreen: React.FC<Props> = ({ navigation }) => {
       {/* Engineer List */}
       {engineers && <FlatList
         data={engineers}
-        keyExtractor={(item) => item._id.toString()}
-        renderItem={renderEngineer}
+        keyExtractor={(item) => item._id}
+        renderItem={renderCard}
         refreshing={refreshing} // Indicates if the list is refreshing
         onRefresh={onRefresh} // Handler for pull-to-refresh
         ListEmptyComponent={

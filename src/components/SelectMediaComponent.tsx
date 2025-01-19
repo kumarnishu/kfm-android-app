@@ -96,10 +96,19 @@ function SelectMediaComponent({
   );
   return (
     <>
+      <FlatList
+        data={files}
+        keyExtractor={(item) => item.id.toString()}
+        horizontal
+        renderItem={renderFileItem}
+        contentContainerStyle={styles.previewContainer}
+      />
       <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-around', marginVertical: 10 }}>
+        {/* File Previews */}
+
         <View style={{ alignItems: 'center' }}>
           <IconButton
-            icon="camera-outline"
+            icon="camera"
             mode="contained"
             size={30}
             onPress={() => {
@@ -115,7 +124,7 @@ function SelectMediaComponent({
         </View>
         <View style={{ alignItems: 'center' }}>
           <IconButton
-            icon="video-outline"
+            icon="video"
             mode="contained"
             size={30}
             onPress={() => {
@@ -131,7 +140,7 @@ function SelectMediaComponent({
         </View>
         <View style={{ alignItems: 'center' }}>
           <IconButton
-            icon="image-outline"
+            icon="image"
             mode="contained"
             size={30}
             onPress={() =>
@@ -147,14 +156,7 @@ function SelectMediaComponent({
         </View>
       </View>
 
-      {/* File Previews */}
-      <FlatList
-        data={files}
-        keyExtractor={(item) => item.id.toString()}
-        horizontal
-        renderItem={renderFileItem}
-        contentContainerStyle={styles.previewContainer}
-      />
+
     </>
   );
 }

@@ -68,7 +68,7 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
         <TextInput
           label="Name"
           placeholder="e.g., John Doe"
-          mode="outlined"
+          mode="flat"
           value={formik.values.name}
           onChangeText={formik.handleChange('name')}
           onBlur={formik.handleBlur('name')}
@@ -82,8 +82,8 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
 
         <TextInput
           label="Email"
-           placeholder="e.g., john.doe@example.com"
-          mode="outlined"
+          placeholder="e.g., john.doe@example.com"
+          mode="flat"
           value={formik.values.email}
           onChangeText={formik.handleChange('email')}
           onBlur={formik.handleBlur('email')}
@@ -97,14 +97,14 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
 
         <TextInput
           label="Mobile"
-          mode="outlined"
+          mode="flat"
           keyboardType="number-pad"
           value={formik.values.mobile}
           onChangeText={formik.handleChange('mobile')}
           onBlur={formik.handleBlur('mobile')}
           error={formik.touched.mobile && !!formik.errors.mobile}
           style={styles.input}
-           placeholder="e.g., 1234567890"
+          placeholder="e.g., 1234567890"
         />
         {formik.touched.mobile && formik.errors.mobile && (
           <HelperText type="error">{formik.errors.mobile}</HelperText>
@@ -112,7 +112,7 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
 
         <TextInput
           label="Address"
-          mode="outlined"
+          mode="flat"
           placeholder='e.g., Bahadurgarh haryana'
           multiline
           numberOfLines={4}
@@ -126,7 +126,6 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
           <HelperText type="error">{formik.errors.address}</HelperText>
         )}
 
-        <Divider style={styles.divider} />
         <Button
           mode="contained"
           buttonColor="red"
@@ -157,7 +156,9 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   input: {
-    marginBottom: 16,
+    backgroundColor: 'white',
+    paddingVertical: 10,
+    fontSize: 18
   },
   textArea: {
     height: 120,
@@ -167,6 +168,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
   },
   button: {
+    marginTop: 10,
     paddingVertical: 10,
     borderRadius: 8,
   },

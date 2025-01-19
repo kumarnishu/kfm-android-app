@@ -118,7 +118,7 @@ const EngineersScreen: React.FC<Props> = ({ navigation }) => {
       {/* Engineer List */}
       {engineers && <FlatList
         data={engineers}
-        keyExtractor={(item) => item._id.toString()}
+        keyExtractor={(item) => item._id}
         renderItem={renderCard}
         refreshing={refreshing} // Indicates if the list is refreshing
         onRefresh={onRefresh} // Handler for pull-to-refresh

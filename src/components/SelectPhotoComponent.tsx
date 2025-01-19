@@ -76,13 +76,13 @@ function SelectPhotoComponent({
       {preview ? (
         <Image
           source={{ uri: preview }}
-          style={{ width: '100%', height: 300, marginBottom: 10 }}
+          style={{ width: '100%', height: 300, marginBottom: 10, borderRadius: 10, borderWidth: 5, borderColor: 'whitesmoke' }}
         />) :
         (
 
           photo && <Image
             source={{ uri: photo }}
-            style={{ width: '100%', height: 300, marginBottom: 10 }}
+            style={{ width: '100%', height: 300, marginBottom: 10, borderRadius: 10, borderWidth: 5, borderColor: 'whitesmoke' }}
           />
         )
       }

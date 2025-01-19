@@ -25,6 +25,7 @@ import { DropDownDto } from '../../../dto/DropDownDto';
 import { GetAllCustomersForDropDown } from '../../../services/CustomerService';
 import { GetAllMachinesDropdown } from '../../../services/MachineService';
 import moment from 'moment';
+import { queryClient } from '../../../App';
 
 function CreateOrEditRegisteredProductForm({
     setDialog,
@@ -87,7 +88,7 @@ function CreateOrEditRegisteredProductForm({
         if (isSuccess) {
             setAlert({ message: 'Successfully saved', color: 'success' });
             setDialog(undefined);
-            setTimeout(() => formik.resetForm(), 3000);
+            queryClient.invalidateQueries('products')
         }
     }, [isSuccess]);
     console.log(formik.values, isDatePickerVisible, isWarrantyPickerVisible)

@@ -55,28 +55,24 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
     }
   }, [isSuccess, data])
   // Render each engineer as a card
-  const renderEngineer = ({ item }: { item: GetRegisteredProductDto }) => (
+  const renderCard = ({ item }: { item: GetRegisteredProductDto }) => (
 
     <Card style={styles.card}>
+      <Title style={styles.subtitle}>Sl.No.{item.sl_no}     Machine : {item.machine.label}</Title>
+
       <Card.Content style={styles.cardContent}>
         <View>
           <Image style={styles.image} source={item.machine_photo !== "" ? { uri: item.machine_photo } : require("../../assets/img/placeholder.png")} />
-          <Paragraph style={{
-            fontSize: 18,
-            fontWeight: 'bold',
-            padding: 5,
-            textTransform: 'capitalize'
-          }}>{item.machine.label}</Paragraph>
         </View>
         <View style={styles.textContainer}>
-          <Title style={styles.title}>{item.sl_no}</Title>
-          <Paragraph style={styles.paragraph}>{item.customer.label}</Paragraph>
+
+          <Paragraph style={[styles.subtitle, { paddingLeft: 0 }]}>{item.customer.label}</Paragraph>
           <Paragraph style={styles.paragraph}>{item.installationDate ? `Installation Date : ${moment(item.installationDate).format("DD-MM-YYYY")}` : 'Not Installed'}</Paragraph>
           <Paragraph style={styles.paragraph}>{item.warrantyUpto ? `Warranty upto : ${moment(item.warrantyUpto).format("DD-MM-YYYY")}` : 'Not Applicable'}</Paragraph>
-          <Button mode='text'  rippleColor="transparent" onPress={() => {
+          <Button mode='text' rippleColor="transparent" onPress={() => {
             setProduct(item)
             setDialog('CreateOrEditRegisteredProductDialog')
-          }} labelStyle={{ width: '100%', textAlign: 'right' }}>Edit</Button>
+          }} labelStyle={{ width: '100%', textAlign: 'left' }}>Edit item</Button>
         </View>
 
       </Card.Content>
@@ -84,7 +80,7 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
         disabled={item?.warrantyUpto && new Date(item.warrantyUpto) <= new Date() ? true : false} onPress={() => {
           setProduct(item)
           setDialog('NewServiceRequestsDialog')
-        }} labelStyle={{ width: '100%', textAlign: 'center' }}>New Service Request</Button>
+        }} labelStyle={{ width: '100%', textAlign: 'left', paddingLeft: 15 }}>New Service Request</Button>
     </Card>
   );
 
@@ -115,26 +111,26 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
 
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
         <Text style={styles.title}>Registered Products</Text>
-        {user?.role == "admin" && 
-        <MaterialIcons
-        name="add-circle"
-        size={40}
-        color="red"
-        onPress={() => {
-          setProduct(undefined)
-          setDialog('CreateOrEditRegisteredProductDialog')
-        }}
-      />
-      }
+        {user?.role == "admin" &&
+          <MaterialIcons
+            name="add-circle"
+            size={40}
+            color="red"
+            onPress={() => {
+              setProduct(undefined)
+              setDialog('CreateOrEditRegisteredProductDialog')
+            }}
+          />
+        }
       </View>
-      <TextInput style={{ marginBottom: 10 }} placeholder='Search' mode='outlined' onChangeText={(val) => setFilter(val)} />
+     <TextInput mode="flat" placeholder='Search' style={{ backgroundColor: 'white', marginBottom: 10 }} onChangeText={(val) => setFilter(val)} />
 
 
       {/* Engineer List */}
       {products && <FlatList
         data={products}
-        keyExtractor={(item) => item._id.toString()}
-        renderItem={renderEngineer}
+        keyExtractor={(item) => item._id}
+        renderItem={renderCard}
         refreshing={refreshing} // Indicates if the list is refreshing
         onRefresh={onRefresh} // Handler for pull-to-refresh
         ListEmptyComponent={
@@ -143,7 +139,7 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
       />}
 
       <CreateOrEditRegisteredProductDialog product={product} dialog={dialog} setDialog={setDialog} />
-      <NewServiceRequestsDialog  product={product} dialog={dialog} setDialog={setDialog}/>
+      <NewServiceRequestsDialog product={product} dialog={dialog} setDialog={setDialog} />
     </View>
   );
 };
@@ -155,14 +151,26 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#f9f9f9',
   },
+  card: {
+    marginBottom: 16,
+    backgroundColor: 'white',
+    borderRadius: 12, // Rounded corners
+    elevation: 4, // Android shadow
+    shadowColor: '#000', // iOS shadow
+    shadowOffset: { width: 0, height: 2 }, // iOS shadow offset
+    shadowOpacity: 0.2, // iOS shadow opacity
+    shadowRadius: 4, // iOS shadow radius
+    overflow: 'hidden', // Prevent content from overflowing rounded corners
+  },
   cardContent: {
     flexDirection: 'row',
-    alignItems: 'center',
+    padding: 16, // Add padding inside the card
   },
   image: {
     width: 150,
-    height: 150,
-    borderColor: 'red',
+    height: 200,
+    borderRadius: 8, // Rounded image corners
+    borderColor: '#ddd', // Light border
     borderWidth: 1,
     marginRight: 15,
   },
@@ -171,27 +179,33 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 16,
-    textTransform: 'capitalize'
+    color: '#333',
+    paddingLeft: 10,
+    marginBottom: 8,
   },
-  card: {
-    marginBottom: 16,
-    backgroundColor: 'white',
-    elevation: 2,
-    borderRadius: 8,
+  subtitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    paddingLeft: 10,
+    marginBottom: 8,
+  },
+  paragraph: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 10,
+    textTransform: 'capitalize',
+  },
+  button: {
+    alignSelf: 'flex-end',
+    marginTop: 8,
   },
   loader: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-
-  paragraph: {
-    paddingLeft: 2,
-    textTransform: 'capitalize',
-    color: 'black'
   },
   emptyText: {
     textAlign: 'center',
@@ -199,7 +213,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#888',
   },
-  toggleButton: {
-    marginTop: 16,
-  },
-}); export default ProductsScreen;
+});
+export default ProductsScreen;
