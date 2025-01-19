@@ -32,9 +32,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   default: {
+    flex:1,
     backgroundColor:'none',
-    marginHorizontal: 15,
-    marginVertical: 100,
     height:'70%',
     shadowColor: '#000',
     shadowOffset: {

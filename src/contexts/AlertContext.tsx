@@ -2,7 +2,8 @@ import React, { createContext, useState } from "react";
 
 type Alert = {
     message: string,
-    color: "error" | "warning" | "success" | "info", 
+    color?: "error" | "warning" | "success" | "info",
+    type?: 'snack' | 'alert',
     variant?: "filled" | "outlined"
 }
 type Context = {

@@ -29,10 +29,10 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
 
   const formik = useFormik({
     initialValues: {
-      name: customer ? customer.name : "",
-      email: customer ? customer.email : "",
-      mobile: customer ? customer.mobile : "",
-      address: customer ? customer.address : "",
+      name: customer ? customer.name : "shdsd",
+      email: customer ? customer.email : "abc@gm.com",
+      mobile: customer ? customer.mobile : "7056943283",
+      address: customer ? customer.address : "bahdurgarh",
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Required').min(4).max(100),

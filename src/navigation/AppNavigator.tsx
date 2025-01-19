@@ -29,6 +29,7 @@ import StaffsScreen from '../screens/main/StaffsScreen';
 import { Modal, Portal, Snackbar } from 'react-native-paper';
 import { AlertContext } from '../contexts/AlertContext';
 import { Alert, StyleSheet } from 'react-native';
+import AlertComponent from '../components/AlertComponent';
 
 export type AuthenticatedStackParamList = {
   HomeScreen: undefined;
@@ -113,7 +114,6 @@ const AppNavigator = () => {
       </NavigationContainer>
     )
     
-  console.log(alert)
   return (
     <NavigationContainer ref={navigationRef}>
 
@@ -121,24 +121,7 @@ const AppNavigator = () => {
        
         <AuthenticatedNavigator />
       </> : <PublicNavigator />}
-      {alert && (
-
-        <Portal>
-          <Snackbar style={{
-            backgroundColor: alert.color == 'error' ? 'red' : 'green'
-          }}
-            visible={!!alert}
-            onDismiss={() => setAlert(undefined)}
-            action={{
-              label: 'Close',
-              onPress: () => setAlert(undefined),
-            }}
-            duration={3000}
-          >
-            {alert.message}
-          </Snackbar>
-        </Portal>
-      )}
+       {alert && <AlertComponent />}
     </NavigationContainer>
   );
 
