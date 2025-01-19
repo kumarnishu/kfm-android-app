@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { useMutation } from 'react-query';
 import { AxiosResponse } from 'axios';
 import { Button, Text, Divider, Snackbar, ActivityIndicator } from 'react-native-paper';
@@ -15,7 +15,7 @@ import { AlertContext } from '../contexts/AlertContext';
 type Props = StackScreenProps<PublicStackParamList, 'OtpVerifyScreen'>;
 
 const OtpVerifyScreen = ({ route }: Props) => {
-    const { hash, otp, timeoutError, stopListener, startListener } = useOtpVerify({ numberOfDigits: 6 });
+    const {  otp, timeoutError, startListener } = useOtpVerify({ numberOfDigits: 6 });
     const { setAlert } = useContext(AlertContext)
     const { mobile } = route.params;
     const { setUser } = useContext(UserContext)
@@ -53,9 +53,10 @@ const OtpVerifyScreen = ({ route }: Props) => {
         }
     }, [otp])
 
+
     useEffect(() => {
         if (isotpSuccss) {
-            setAlert({ message: 'Otp sent successfully', color: 'success' })
+            setAlert({ message: 'Resend Otp sent successfully', color: 'success' })
         }
         if (error) {
             setAlert({ message: error?.response?.data?.message || 'Unknown error occurred', color: 'error' });
@@ -70,14 +71,10 @@ const OtpVerifyScreen = ({ route }: Props) => {
         if (isSuccess && data) {
             setIsLoading(false)
             setUser(data.data.user)
-            stopListener()
-            }
-        if (error) {
-                setIsLoading(false)
-                setAlert({
-                    message: error?.response?.data?.message || 'Unknown error occurred',color:'error'});
-                }
-    }, [isSuccess, error]);
+        }
+    }, [isSuccess]);
+
+
     return (
         <>
 

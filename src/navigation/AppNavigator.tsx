@@ -2,11 +2,9 @@ import React, { useContext, useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import {
   NavigationContainer,
-  createNavigationContainerRef,
 } from '@react-navigation/native';
 import { UserContext } from '../contexts/UserContext';
 import HomeScreen from '../screens/HomeScreen';
-import { setupInterceptors } from '../services/utils/axiosIterceptor';
 import VideoLoader from '../components/VideoLoader';
 import CustomerDetailsScreen from '../screens/details/CustomerDetailsScreen';
 import CustomersScreen from '../screens/main/CustomersScreen';
@@ -26,14 +24,11 @@ import ServiceRequestDetailsScreen from '../screens/details/ServiceRequestDetail
 import ServiceRequestsScreen from '../screens/main/ServiceRequestsScreen';
 import StaffDetailsScreen from '../screens/details/StaffDetailsScreen';
 import StaffsScreen from '../screens/main/StaffsScreen';
-import { Modal, Portal, Snackbar } from 'react-native-paper';
 import { AlertContext } from '../contexts/AlertContext';
-import { Alert, StyleSheet } from 'react-native';
 import AlertComponent from '../components/AlertComponent';
 
 export type AuthenticatedStackParamList = {
   HomeScreen: undefined;
-  LoginScreen: undefined,
   NotificationScreen: undefined;
   CustomerDetailsScreen: { id: string }; // Example parameter
   CustomersScreen: undefined
@@ -57,21 +52,11 @@ export type PublicStackParamList = {
   RegisterScreen: undefined
 };
 
-export const navigationRef = createNavigationContainerRef();
-
-export const navigate = (name: string, params?: object) => {
-  if (navigationRef.isReady()) {
-    //@ts-ignore
-    navigationRef.navigate(name, params);
-  }
-};
-
 const AuthenticatedStack = createStackNavigator<AuthenticatedStackParamList>();
 const PublicStack = createStackNavigator<PublicStackParamList>();
 
 const AuthenticatedNavigator = () => (
   <AuthenticatedStack.Navigator initialRouteName="HomeScreen" screenOptions={{ animation: 'fade', headerShown: false }}>
-    <PublicStack.Screen name="LoginScreen" component={LoginScreen} />
     <AuthenticatedStack.Screen name="HomeScreen" component={HomeScreen} />
     <AuthenticatedStack.Screen name="NotificationScreen" component={NotificationScreen} />
     <AuthenticatedStack.Screen name="CustomersScreen" component={CustomersScreen} />
@@ -103,25 +88,20 @@ const AppNavigator = () => {
   const { user, isLoading } = useContext(UserContext);
   const { alert, setAlert } = useContext(AlertContext)
 
-  useEffect(() => {
-    setupInterceptors(navigate);
-  }, []);
-
   if (isLoading)
     return (
       <NavigationContainer>
         <VideoLoader videoUrl='https://www.w3schools.com/html/mov_bbb.mp4' />
       </NavigationContainer>
     )
-    
-  return (
-    <NavigationContainer ref={navigationRef}>
 
-      {user ? <>
-       
+  return (
+    <NavigationContainer>
+
+      {user ?
         <AuthenticatedNavigator />
-      </> : <PublicNavigator />}
-       {alert && <AlertComponent />}
+        : <PublicNavigator />}
+      {alert && <AlertComponent />}
     </NavigationContainer>
   );
 

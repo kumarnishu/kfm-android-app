@@ -11,31 +11,10 @@ const apiClient = axios.create({
   withCredentials: true,
 });
 
-
-
-const setupInterceptors = (navigate: (name: string, params?: object) => void): void => {
-  // Example interceptor setup
-
-  apiClient.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      console.log(error)
-      const errorMessage = error.response?.data?.message
-      if (
-        errorMessage === "please login to access this resource" ||
-        errorMessage === "login again ! session expired" ||
-        errorMessage === "login again"
-      ) {
-        navigate('LoginScreen');
-      }
-      return Promise.reject(error);
-    },
-  );
-};
 const multipartHeaders = {
   headers: {
     'Content-Type': 'multipart/form-data'
   }
 }
 
-export { BaseURL, multipartHeaders, apiClient, setupInterceptors };
+export { BaseURL, multipartHeaders, apiClient };

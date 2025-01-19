@@ -29,6 +29,10 @@ const LoginScreen = ({ navigation }: Props) => {
     BackendError,
     { mobile: string }
   >(SendOtp, {
+    onSuccess: (() => {
+      AsyncStorage.setItem('uname', formik.values.mobile);
+      navigation.replace("OtpVerifyScreen", { mobile: formik.values.mobile })
+    }),
     onError: ((error) => {
       error && setAlert({ message: error.response.data.message || "", color: 'error' })
     })
@@ -56,25 +60,12 @@ const LoginScreen = ({ navigation }: Props) => {
     retrieveCredentials();
   }, []);
 
-  useEffect(() => {
-    if (isSuccess) {
-      navigation.replace("OtpVerifyScreen", { mobile: formik.values.mobile })
-      AsyncStorage.setItem('uname', formik.values.mobile);
 
-    }
-    if (error) {
-      setAlert({ message: error?.response?.data?.message || 'Unknown error occurred', color: 'error' });
-    }
-  }, [isSuccess, error]);
-
-  useEffect(() => {
-    setUser(undefined)
-  }, [])
   return (
     <>
 
-      <View style={{ flex: 1, padding: 10, flexDirection: 'column', gap: 15, justifyContent: 'center' ,backgroundColor: 'white'}}>
-        <Image style={{ width: 200, height: 50,marginLeft:-15 }} source={require('../assets/img/icon.png')} />
+      <View style={{ flex: 1, padding: 10, flexDirection: 'column', gap: 15, justifyContent: 'center', backgroundColor: 'white' }}>
+        <Image style={{ width: 200, height: 50, marginLeft: -15 }} source={require('../assets/img/icon.png')} />
         <TextInput
           label="Mobile"
           autoFocus
@@ -84,7 +75,7 @@ const LoginScreen = ({ navigation }: Props) => {
           onBlur={formik.handleBlur('mobile')}
           keyboardType='numeric'
           mode="flat"
-          style={{ backgroundColor: 'white', paddingVertical: 10,fontSize:20 }}
+          style={{ backgroundColor: 'white', paddingVertical: 10, fontSize: 20 }}
           error={formik.touched.mobile && !!formik.errors.mobile}
         />
         <Button

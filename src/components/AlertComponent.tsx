@@ -35,7 +35,7 @@ export default function AlertComponent() {
                             <View style={styles.modalOverlay}>
                                 <View style={[alert.color == 'error' ? styles.errorAlertBox : styles.successAlertBox, { borderRadius: 10 }]}>
                                     <Text style={styles.alertTitle}>Alert</Text>
-                                    <Text style={styles.alertMessage}>This is a custom alert message!</Text>
+                                    <Text style={styles.alertMessage}>{alert.message}</Text>
                                     <Button labelStyle={{ color: 'white' }} onPress={() => setAlert(undefined)} >OK</Button>
                                 </View>
                             </View>
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        zIndex:1000
     },
     modalOverlay: {
         flex: 1,
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
     successAlertBox: {
         width: 300,
         padding: 20,
-        backgroundColor: 'white',
+        backgroundColor: 'green',
         borderRadius: 10,
     },
     errorAlertBox: {
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     alertTitle: {
-        fontSize:20,
+        fontSize: 20,
         textAlign: 'center',
         padding: 10,
         fontWeight: 'bold',
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
     },
     alertMessage: {
         fontSize: 16,
-        letterSpacing:1.1,
+        letterSpacing: 1.1,
         color: 'white',
         marginBottom: 20,
     },

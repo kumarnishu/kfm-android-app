@@ -31,7 +31,7 @@ const Navbar = () => {
                     <Image source={{ uri: user.dp }} style={styles.picture} />
                 ) : (
                     <Text style={styles.logoText}>
-                        {toTitleCase(user?.username?.slice(0, 8) || "")}
+                        {toTitleCase(user?.username || "Home")}
                     </Text>
                 )}
             </View>
@@ -59,7 +59,7 @@ const Navbar = () => {
                 {/* Menu Icon with Dropdown */}
                 <Menu
                     visible={menuVisible}
-                    style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', width: 150}}
+                    style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', width: 150 }}
                     anchorPosition='bottom'
                     onDismiss={closeMenu}
                     anchor={

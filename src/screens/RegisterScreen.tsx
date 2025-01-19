@@ -4,13 +4,13 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation } from 'react-query';
 import { AxiosResponse } from 'axios';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { BackendError } from '../..';
 import { PublicStackParamList } from '../navigation/AppNavigator';
-import { CreateOrEditCustomer } from '../services/CustomerService';
 import { CreateOrEditCustomerDto } from '../dto/CustomerDto';
 import { AlertContext } from '../contexts/AlertContext';
+import { Signup } from '../services/UserService';
 
 type Props = StackScreenProps<PublicStackParamList, 'RegisterScreen'>;
 
@@ -20,8 +20,12 @@ function RegisterScreen({ navigation }: Props) {
   const { mutate, isSuccess, isLoading } = useMutation<
     AxiosResponse<{ message: string }>,
     BackendError,
-    { id?: string, body: CreateOrEditCustomerDto }
-  >(CreateOrEditCustomer, {
+    { body: CreateOrEditCustomerDto }
+  >(Signup, {
+    onSuccess: (() => {
+      setAlert({ message: `${formik.values.name} ThankYou for joining With us !!`, color: 'success', type: 'snack' })
+      navigation.navigate('LoginScreen')
+    }),
     onError: ((error) => {
       error && setAlert({ message: error.response.data.message || "", color: 'error' })
     })
@@ -39,9 +43,7 @@ function RegisterScreen({ navigation }: Props) {
     validationSchema: Yup.object({
       name: Yup.string().required('Required').min(4).max(100),
       email: Yup.string().required('Required').email('Invalid email'),
-      gst: Yup.string().required('Required 15 digit gst number').min(15).max(15),
       address: Yup.string().required('Required Address').min(4).max(300),
-      pincode: Yup.number().required('Required 6 digit pincode').min(100000).max(999999),
       mobile: Yup.string().required('mobile is required').min(10, 'mobile must be 10 digits').max(10, 'mobile must be 10 digits').matches(/^[0-9]+$/, 'mobile must be a number'),
     }),
     onSubmit: (values) => {
@@ -49,95 +51,122 @@ function RegisterScreen({ navigation }: Props) {
     },
   });
 
-  useEffect(() => {
-    if (isSuccess) {
-      setAlert({ message: `${formik.values.name} ThankYou for joining With us !!`, color: 'error' })
-      setTimeout(() => {
-        {
-          formik.resetForm()
-          navigation.navigate("LoginScreen")
-        }
-      }, 3000);
-    }
-
-  }, [isSuccess]);
-
-
   return (
     <>
 
-      <ScrollView>
-        <View style={{ flex: 1, justifyContent: 'center', padding: 10, gap: 2 }}>
-          <Text style={{ fontSize: 30, textAlign: 'center', padding: 20, fontWeight: 'bold' }}>Create Account</Text>
-          <TextInput
-            label="Enter you name"
-            mode="outlined"
-            value={formik.values.name}
-            onChangeText={formik.handleChange('name')}
-            onBlur={formik.handleBlur('name')}
-            error={formik.touched.name && Boolean(formik.errors.name)}
-          />
-          {formik.touched.name && Boolean(formik.errors.name) && <HelperText type="error" >
-            {formik.errors.name}
-          </HelperText>}
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.headerText}>Register Here</Text>
+        <TextInput
+          label="Company Name"
+          placeholder="e.g., KFM INDIA"
+          mode="outlined"
+          value={formik.values.name}
+          onChangeText={formik.handleChange('name')}
+          onBlur={formik.handleBlur('name')}
+          error={formik.touched.name && !!formik.errors.name}
+          style={styles.input}
 
-          <TextInput
-            label="Enter your email"
-            mode="outlined"
-            value={formik.values.email}
-            onChangeText={formik.handleChange('email')}
-            onBlur={formik.handleBlur('email')}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-          />
-          {formik.touched.email && Boolean(formik.errors.email) && <HelperText type="error" >
-            {formik.errors.email}
-          </HelperText>}
+        />
+        {formik.touched.name && formik.errors.name && (
+          <HelperText type="error">{formik.errors.name}</HelperText>
+        )}
 
-          <TextInput
-            label="Enter your mobile"
-            mode="outlined"
-            keyboardType="number-pad"
-            value={formik.values.mobile}
-            onChangeText={formik.handleChange('mobile')}
-            onBlur={formik.handleBlur('mobile')}
-            error={formik.touched.mobile && Boolean(formik.errors.mobile)}
-          />
-          {formik.touched.mobile && Boolean(formik.errors.mobile) && <HelperText type="error" >
-            {formik.errors.mobile}
-          </HelperText>}
+        <TextInput
+          label="Email"
+          placeholder="e.g., john.doe@example.com"
+          mode="outlined"
+          value={formik.values.email}
+          onChangeText={formik.handleChange('email')}
+          onBlur={formik.handleBlur('email')}
+          error={formik.touched.email && !!formik.errors.email}
+          style={styles.input}
 
+        />
+        {formik.touched.email && formik.errors.email && (
+          <HelperText type="error">{formik.errors.email}</HelperText>
+        )}
 
-          <TextInput
-            label="Enter your address"
-            mode="outlined"
-            multiline
-            style={{ height: 100 }}
-            numberOfLines={4}
-            value={formik.values.address}
-            onChangeText={formik.handleChange('address')}
-            onBlur={formik.handleBlur('address')}
-            error={formik.touched.address && Boolean(formik.errors.address)}
-          />
-          {formik.touched.address && Boolean(formik.errors.address) && < HelperText type="error">
-            {formik.errors.address}
-          </HelperText>}
-          <Divider style={{ marginVertical: 10 }} />
-          <Button
-            mode="contained"
-            buttonColor='red'
-            style={{ padding: 5, borderRadius: 10 }}
-            onPress={() => formik.handleSubmit()}
-            loading={isLoading}
-            disabled={isLoading}
-          >
-            Register
-          </Button>
+        <TextInput
+          label="Mobile"
+          mode="outlined"
+          keyboardType="number-pad"
+          value={formik.values.mobile}
+          onChangeText={formik.handleChange('mobile')}
+          onBlur={formik.handleBlur('mobile')}
+          error={formik.touched.mobile && !!formik.errors.mobile}
+          style={styles.input}
+          placeholder="e.g., 1234567890"
+        />
+        {formik.touched.mobile && formik.errors.mobile && (
+          <HelperText type="error">{formik.errors.mobile}</HelperText>
+        )}
 
-        </View>
-      </ScrollView >
+        <TextInput
+          label="Address"
+          mode="outlined"
+          placeholder='e.g., Bahadurgarh haryana'
+          multiline
+          numberOfLines={4}
+          value={formik.values.address}
+          onChangeText={formik.handleChange('address')}
+          onBlur={formik.handleBlur('address')}
+          error={formik.touched.address && !!formik.errors.address}
+          style={[styles.input, styles.textArea]}
+        />
+        {formik.touched.address && formik.errors.address && (
+          <HelperText type="error">{formik.errors.address}</HelperText>
+        )}
+
+        <Button
+          mode="contained"
+          buttonColor="red"
+          style={styles.button}
+          onPress={() => {
+            formik.isValid && formik.handleSubmit()
+          }}
+          loading={isLoading}
+          disabled={isLoading}
+        >
+          {!formik.isValid ? 'Close' : 'Register'}
+        </Button>
+      </ScrollView>
     </>
   );
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#f9f9f9',
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+    color: '#333',
+  },
+  input: {
+    marginBottom: 10,
+  },
+  textArea: {
+    height: 120,
+  },
+  divider: {
+    marginVertical: 20,
+    backgroundColor: '#ddd',
+  },
+  button: {
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  snackbar: {
+    backgroundColor: '#323232',
+  },
+});
 
 
 

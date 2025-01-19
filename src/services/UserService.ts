@@ -1,4 +1,9 @@
+import { CreateOrEditCustomerDto } from "../dto/CustomerDto";
 import { apiClient } from "./utils/axiosIterceptor";
+
+export const Signup = async ({ body }: { body: CreateOrEditCustomerDto }) => {
+  return await apiClient.post("register", body)
+};
 
 export const SendOtp = async (
   body: {
