@@ -69,7 +69,8 @@ const LoginScreen = ({ navigation }: Props) => {
         <TextInput
           label="Mobile"
           autoFocus
-          placeholder="Enter Registered Mobile"
+          contentStyle={{fontSize:20}}
+          placeholder="Registered Mobile Number"
           value={formik.values.mobile}
           onChangeText={formik.handleChange('mobile')}
           onBlur={formik.handleBlur('mobile')}
@@ -83,19 +84,21 @@ const LoginScreen = ({ navigation }: Props) => {
           onPress={() => formik.handleSubmit()}
           loading={isLoading}
           buttonColor='red'
-          style={{ padding: 5, borderRadius: 10 }}
+          style={{ padding: 5,paddingHorizontal:20, borderRadius: 10 }}
         >
-          Sign In
+          LOGIN
         </Button>
 
 
         <Button
-          mode="text"
+          mode="contained"
           disabled={isLoading}
           onPress={() => navigation.navigate("RegisterScreen")}
-          labelStyle={{ textAlign: 'center', fontSize: 14, marginTop: 30 }}
+          labelStyle={{ color: 'black', textAlign: 'center', fontSize: 14, paddingVertical: 5 }}
+          buttonColor='lightgrey'
+          style={{ position: 'absolute', bottom: 20, margin: 10, width: '100%', borderRadius: 5 }}
         >
-          Register as  Customer .
+          REGISTER AS CUSTOMER
         </Button>
       </View >
     </>
