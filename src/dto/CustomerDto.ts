@@ -17,6 +17,7 @@ export type GetCustomerDto = {
 
 export type CreateOrEditCustomerDto = {
     name: string,
+    username?:string,
     address: string,
     email: string,
     mobile: string,

@@ -34,7 +34,7 @@ const LoginScreen = ({ navigation }: Props) => {
       navigation.replace("OtpVerifyScreen", { mobile: formik.values.mobile })
     }),
     onError: ((error) => {
-      error && setAlert({ message: error.response.data.message || "", color: 'error' })
+      error && setAlert({ message: error.response.data.message || "", color: 'error', type: 'snack' })
     })
   });
 
@@ -69,7 +69,7 @@ const LoginScreen = ({ navigation }: Props) => {
         <TextInput
           label="Mobile"
           autoFocus
-          contentStyle={{fontSize:20}}
+          contentStyle={{ fontSize: 20 }}
           placeholder="Registered Mobile Number"
           value={formik.values.mobile}
           onChangeText={formik.handleChange('mobile')}
@@ -84,7 +84,7 @@ const LoginScreen = ({ navigation }: Props) => {
           onPress={() => formik.handleSubmit()}
           loading={isLoading}
           buttonColor='red'
-          style={{ padding: 5,paddingHorizontal:20, borderRadius: 10 }}
+          style={{ padding: 5, paddingHorizontal: 20, borderRadius: 10 }}
         >
           LOGIN
         </Button>

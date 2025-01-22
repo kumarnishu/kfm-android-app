@@ -81,7 +81,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   }, [user])
 
   return (
-    <Surface elevation={2} >
+    <Surface elevation={2} style={{flex:1}} >
       <ScrollView >
         <Navbar />
         {data.map((card) => (

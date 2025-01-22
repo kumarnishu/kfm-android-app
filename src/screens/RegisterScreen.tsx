@@ -27,7 +27,10 @@ function RegisterScreen({ navigation }: Props) {
       navigation.navigate('LoginScreen')
     }),
     onError: ((error) => {
-      error && setAlert({ message: error.response.data.message || "", color: 'error' })
+      error && setAlert({
+        message: error.response.data.message || "", color: 'error', type
+          : 'snack'
+      })
     })
   });
 
@@ -35,13 +38,15 @@ function RegisterScreen({ navigation }: Props) {
   const formik = useFormik({
     initialValues: {
       name: "",
+      username: "",
       email: "",
       mobile: "",
       address: "",
 
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Required').min(4).max(100),
+      name: Yup.string().required('Required').min(2).max(100),
+      username: Yup.string().required('Required').min(2).max(100),
       email: Yup.string().required('Required').email('Invalid email'),
       address: Yup.string().required('Required Address').min(4).max(300),
       mobile: Yup.string().required('mobile is required').min(10, 'mobile must be 10 digits').max(10, 'mobile must be 10 digits').matches(/^[0-9]+$/, 'mobile must be a number'),
@@ -59,7 +64,7 @@ function RegisterScreen({ navigation }: Props) {
         <TextInput
           label="Company Name"
           placeholder="e.g., KFM INDIA"
-          mode="outlined"
+          mode="flat"
           value={formik.values.name}
           onChangeText={formik.handleChange('name')}
           onBlur={formik.handleBlur('name')}
@@ -70,11 +75,25 @@ function RegisterScreen({ navigation }: Props) {
         {formik.touched.name && formik.errors.name && (
           <HelperText type="error">{formik.errors.name}</HelperText>
         )}
+        <TextInput
+          label="User Name"
+          placeholder="e.g., Rahul"
+          mode="flat"
+          value={formik.values.username}
+          onChangeText={formik.handleChange('username')}
+          onBlur={formik.handleBlur('username')}
+          error={formik.touched.username && !!formik.errors.username}
+          style={styles.input}
+
+        />
+        {formik.touched.username && formik.errors.username && (
+          <HelperText type="error">{formik.errors.username}</HelperText>
+        )}
 
         <TextInput
-          label="Email"
+          label="Email Address"
           placeholder="e.g., john.doe@example.com"
-          mode="outlined"
+          mode="flat"
           value={formik.values.email}
           onChangeText={formik.handleChange('email')}
           onBlur={formik.handleBlur('email')}
@@ -87,8 +106,8 @@ function RegisterScreen({ navigation }: Props) {
         )}
 
         <TextInput
-          label="Mobile"
-          mode="outlined"
+          label="Mobile Number"
+          mode="flat"
           keyboardType="number-pad"
           value={formik.values.mobile}
           onChangeText={formik.handleChange('mobile')}
@@ -102,8 +121,8 @@ function RegisterScreen({ navigation }: Props) {
         )}
 
         <TextInput
-          label="Address"
-          mode="outlined"
+          label="Company Address"
+          mode="flat"
           placeholder='e.g., Bahadurgarh haryana'
           multiline
           numberOfLines={4}
@@ -143,7 +162,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
   },
   headerText: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
@@ -151,6 +170,8 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 10,
+    padding: 5,
+    backgroundColor: 'white'
   },
   textArea: {
     height: 120,
