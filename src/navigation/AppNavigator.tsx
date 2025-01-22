@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import {
-  NavigationContainer,  createNavigationContainerRef,
+  NavigationContainer, createNavigationContainerRef,
 } from '@react-navigation/native';
 import { UserContext } from '../contexts/UserContext';
 import HomeScreen from '../screens/HomeScreen';
@@ -101,7 +101,7 @@ const AppNavigator = () => {
   if (isLoading)
     return (
       <NavigationContainer>
-        <VideoLoader videoUrl='https://www.w3schools.com/html/mov_bbb.mp4' />
+        <VideoLoader videoUrl={require('../assets/brand-video.mp4')} />
       </NavigationContainer>
     )
 
