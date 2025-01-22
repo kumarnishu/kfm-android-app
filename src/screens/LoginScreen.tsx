@@ -34,7 +34,7 @@ const LoginScreen = ({ navigation }: Props) => {
       navigation.replace("OtpVerifyScreen", { mobile: formik.values.mobile })
     }),
     onError: ((error) => {
-      error && setAlert({ message: error.response.data.message || "", color: 'error', type: 'alert' })
+      error && setAlert({ message: error.response.data.message || "", color: 'error', type: 'snack' })
     })
   });
 
